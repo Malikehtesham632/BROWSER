@@ -10,6 +10,11 @@ export function normalizeSearchResult(item,source,rank=null,{includeRaw=false}={
   const result={url,title:String(item.title||item.name||"").trim(),
     snippet:String(pickSnippet(item)).replace(/\s+/g," ").trim().slice(0,MAX_SNIPPET),
     source,rank,publishedAt:item.publishedDate||item.published_at||item.date||null};
+  if(typeof item.engine==="string"&&item.engine.trim())result.engine=item.engine.trim();
+  if(Array.isArray(item.engines)){
+    const engines=[...new Set(item.engines.filter(engine=>typeof engine==="string").map(engine=>engine.trim()).filter(Boolean))];
+    if(engines.length)result.engines=engines;
+  }
   if(includeRaw)result.raw=item;
   return result;
 }

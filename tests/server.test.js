@@ -17,6 +17,7 @@ function makeConfig(overrides = {}) {
 
 const engine = {
   providerNames: () => ['fake'],
+  providerHealth: () => ({ fake: { healthy: true } }),
   indexStats: () => ({ documents: 0 }),
   search: async (query) => ({
     query,
@@ -57,7 +58,9 @@ test('server allows a public host when a token is set', () => {
 
 test('health is open but search needs the token', async () => {
   await withServer(makeConfig({ apiToken: 'secret', rateLimitPerMinute: 100 }), async (base) => {
-    assert.equal((await fetch(`${base}/health`)).status, 200);
+    const health = await fetch(`${base}/health`);
+    assert.equal(health.status, 200);
+    assert.deepEqual((await health.json()).providerHealth, { fake: { healthy: true } });
     assert.equal((await fetch(`${base}/search?q=test`)).status, 401);
     const wrong = await fetch(`${base}/search?q=test`, {
       headers: { Authorization: 'Bearer nope' }

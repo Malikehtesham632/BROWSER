@@ -4,20 +4,29 @@ export class ProviderError extends Error {
   }
 }
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-export async function fetchJson(url,{provider="provider",timeoutMs=4000,retries=1,fetchImpl=globalThis.fetch,...init}={}) {
+export async function fetchJson(url,{provider="provider",timeoutMs=4000,retries=1,maxTotalMs=null,fetchImpl=globalThis.fetch,includeErrorBody=true,...init}={}) {
   let last;
+  const deadline=Number.isFinite(maxTotalMs)?Date.now()+Math.max(1,maxTotalMs):Infinity;
   for(let attempt=0;attempt<=retries;attempt++){
     try{
-      const res=await fetchImpl(url,{...init,signal:AbortSignal.timeout(timeoutMs)});
-      if(res.ok)return await res.json();
-      const body=(await res.text()).slice(0,300);
-      throw new ProviderError(`${provider} HTTP ${res.status}: ${body}`,{provider,status:res.status,retryable:res.status===429||res.status>=500});
+      const remaining=deadline-Date.now();
+      if(remaining<=0)throw new ProviderError(`${provider} timed out after ${maxTotalMs}ms`,{provider});
+      const requestTimeout=Math.max(1,Math.min(timeoutMs,remaining));
+      const res=await fetchImpl(url,{...init,signal:AbortSignal.timeout(requestTimeout)});
+      if(res.ok){
+        try{return await res.json();}
+        catch{throw new ProviderError(`${provider} returned invalid JSON`,{provider});}
+      }
+      const body=includeErrorBody?(await res.text()).slice(0,300):"";
+      throw new ProviderError(`${provider} HTTP ${res.status}${body?`: ${body}`:""}`,{provider,status:res.status,retryable:res.status===429||res.status>=500});
     }catch(err){
       const e=err instanceof ProviderError?err:new ProviderError(
-        err?.name==="TimeoutError"?`${provider} timed out after ${timeoutMs}ms`:`${provider} request failed: ${err?.message??err}`,{provider});
+        err?.name==="TimeoutError"||err?.name==="AbortError"?`${provider} timed out after ${timeoutMs}ms`:`${provider} connection failed`,{provider,retryable:true});
       last=e;
       if(!e.retryable || attempt===retries)throw e;
-      await sleep(150*2**attempt);
+      const delay=150*2**attempt;
+      if(Date.now()+delay>=deadline)throw e;
+      await sleep(delay);
     }
   }
   throw last;

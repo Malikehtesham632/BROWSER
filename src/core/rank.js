@@ -7,12 +7,14 @@ export function fuseResults(lists, {k=60, weights={}, limit=20}={}) {
     results.forEach((result,index)=>{
       const key=canonicalUrlKey(result.url); if(!key) return;
       const rank=result.rank ?? index+1;
+      const resultEngines=[...(result.engines||[]),...(result.engine?[result.engine]:[])];
       let e=merged.get(key);
       if(!e) {
         e={url:result.url,title:result.title||"",snippet:result.snippet||"",
-           source,sources:[],publishedAt:result.publishedAt??null,score:0,ranks:{}};
+           source,sources:[],engines:[],publishedAt:result.publishedAt??null,score:0,ranks:{}};
         merged.set(key,e);
       }
+      for(const engine of resultEngines)if(!e.engines.includes(engine))e.engines.push(engine);
       if(e.ranks[source] !== undefined) return;
       e.ranks[source]=rank; e.sources.push(source); e.score += weight/(k+rank);
       if(!e.title && result.title)e.title=result.title;
@@ -21,5 +23,9 @@ export function fuseResults(lists, {k=60, weights={}, limit=20}={}) {
     });
   }
   return [...merged.values()].sort((a,b)=>b.score-a.score || b.sources.length-a.sources.length)
-    .slice(0,limit).map(e=>({...e,score:Math.round(e.score*1e5)/1e5}));
+    .slice(0,limit).map(({engines,...e})=>({
+      ...e,
+      ...(engines.length?{engine:engines[0],engines}:{}),
+      score:Math.round(e.score*1e5)/1e5
+    }));
 }

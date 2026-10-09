@@ -33,6 +33,18 @@ Set `GEMINI_API_KEY` in `.env`. Keep the key server-side and never commit `.env`
 
 The query model defaults to `gemini-3.8-flash`; override with `GEMINI_QUERY_MODEL` if desired.
 
+### SearXNG search provider
+
+SearXNG runs in parallel with configured Serper, SerpAPI, and Exa providers. Its results are normalized and pass through the same URL deduplication, weighted reciprocal-rank fusion, and reranking pipeline. Configure one or more instance base URLs; instances must allow the JSON API at `GET /search?q=...&format=json`.
+
+```env
+SEARXNG_ENABLED=true
+SEARXNG_INSTANCES=["https://searxng.deggo.fyi/"]
+SEARXNG_RETRIES=1
+```
+
+`SEARXNG_INSTANCES` also accepts comma-separated URLs. The legacy `SEARXNG_URL` setting remains supported when `SEARXNG_INSTANCES` is unset. An instance that blocks its JSON API is reported unhealthy; Nova does not scrape its HTML as a fallback. Provider failures do not prevent other providers from returning results. `/health` reports provider latency, failures, circuit state, and SearXNG per-instance health after searches.
+
 ## Query Lab
 
 Add one query manually:
