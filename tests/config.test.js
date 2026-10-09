@@ -6,7 +6,8 @@ function withEnv(values, run) {
   const saved = {};
   for (const key of Object.keys(values)) {
     saved[key] = process.env[key];
-    process.env[key] = values[key];
+    if (values[key] === undefined) delete process.env[key];
+    else process.env[key] = values[key];
   }
   try {
     return run();
@@ -45,6 +46,13 @@ test('ranking settings have safe defaults and can be changed', () => {
 test('the stable Gemini model is the last fallback', () => {
   const config = withEnv({ GEMINI_FALLBACK_MODELS: '' }, loadConfig);
   assert.equal(config.ai.fallbackModels.at(-1), 'gemini-3.5-flash');
+});
+
+test('SearXNG has working public defaults when no provider configuration is supplied', () => {
+  const config = withEnv({ SEARXNG_INSTANCES: undefined, SEARXNG_URL: undefined, SEARXNG_ENABLED: undefined }, loadConfig);
+  assert.equal(config.searxngEnabled, true);
+  assert.ok(config.searxngInstances.length >= 2);
+  assert.ok(config.searxngInstances.every(url => /^https:\/\//.test(url)));
 });
 
 test('SearXNG accepts multiple instances from JSON and enables configured instances', () => {

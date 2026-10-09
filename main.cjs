@@ -52,15 +52,20 @@ function startEngine() {
   engineProcess = spawn(process.execPath, [entry], { cwd: app.getAppPath(), env, stdio: ['ignore', 'pipe', 'pipe'] });
   engineProcess.stdout.on('data', data => console.log(`[Omni] ${data}`));
   engineProcess.stderr.on('data', data => console.error(`[Omni] ${data}`));
+  engineProcess.on('error', error => console.error('[Omni] Failed to start search engine:', error));
+  engineProcess.on('exit', (code, signal) => console.log(`[Omni] Search engine exited code=${code ?? 'null'} signal=${signal ?? 'null'}`));
 }
 
 async function loadNovaUI() {
-  const cssPath = path.join(app.getAppPath(), 'public', 'firefox-ui.css');
+  const cssFiles = ['firefox-ui.css', 'search-premium.css'];
   try {
-    const css = fs.readFileSync(cssPath, 'utf8');
-    await mainWindow.webContents.insertCSS(css);
+    for (const file of cssFiles) {
+      const cssPath = path.join(app.getAppPath(), 'public', file);
+      const css = fs.readFileSync(cssPath, 'utf8');
+      await mainWindow.webContents.insertCSS(css);
+    }
   } catch (error) {
-    console.error('[Nova UI] Failed to load Firefox-inspired chrome layer:', error);
+    console.error('[Nova UI] Failed to load browser UI styles:', error);
   }
 }
 
@@ -72,7 +77,6 @@ function createWindow() {
     minHeight: 650,
     title: 'Nova Browser',
     backgroundColor: '#1c1b22',
-    // Tabs live in the title bar (Firefox-style); native window buttons are drawn as an overlay.
     titleBarStyle: 'hidden',
     titleBarOverlay: { color: '#1c1b22', symbolColor: '#fbfbfe', height: 44 },
     trafficLightPosition: { x: 14, y: 14 },
@@ -93,6 +97,18 @@ function createWindow() {
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (/^https?:\/\//i.test(url)) return { action: 'allow' };
     return { action: 'deny' };
+  });
+
+  // Electron's audio-state-changed event supplies the audible state as its
+  // second argument. Older builds incorrectly destructured an object from
+  // that argument, which can be undefined and crash the main process.
+  mainWindow.webContents.on('audio-state-changed', (_event, audible) => {
+    const isAudible = typeof audible === 'boolean'
+      ? audible
+      : Boolean(audible && typeof audible === 'object' && audible.audible);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send('nova:audio-state', { audible: isAudible });
+    }
   });
 
   mainWindow.loadURL(`http://${HOST}:${PORT}`).then(loadNovaUI).catch(error => {
