@@ -6,26 +6,34 @@ const root = new URL('..', import.meta.url);
 const read = name => fs.readFileSync(new URL(name, root), 'utf8');
 
 test('Electron browser shell uses context isolation and disables renderer Node access', () => {
-  const main = read('main.cjs');
+  const main = read('desktop/main.cjs');
   assert.match(main, /contextIsolation:\s*true/);
   assert.match(main, /nodeIntegration:\s*false/);
   assert.match(main, /sandbox:\s*true/);
 });
 
 test('Electron browser denies dangerous permission requests by default', () => {
-  const main = read('main.cjs');
+  const main = read('desktop/main.cjs');
   assert.match(main, /setPermissionRequestHandler/);
   assert.match(main, /permission === 'fullscreen'/);
 });
 
 test('Nova updater supports check, download and install lifecycle', () => {
-  const preload = read('preload.cjs');
-  const main = read('main.cjs');
+  const preload = read('desktop/preload.cjs');
+  const main = read('desktop/main.cjs');
   assert.match(preload, /checkForUpdates/);
   assert.match(preload, /downloadUpdate/);
   assert.match(preload, /installUpdate/);
   assert.match(main, /autoDownload = false/);
   assert.match(main, /autoInstallOnAppQuit = true/);
+});
+
+test('packaged browser starts the Omni server in-process instead of spawning the Electron executable', () => {
+  const pkg = JSON.parse(read('package.json'));
+  const main = read('desktop/main.cjs');
+  assert.equal(pkg.main, 'desktop/main.cjs');
+  assert.match(main, /createSearchEngine/);
+  assert.doesNotMatch(main, /spawn\(process\.execPath/);
 });
 
 test('Search stream announces the provider set before provider results', () => {

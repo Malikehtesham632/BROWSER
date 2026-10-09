@@ -1,6 +1,6 @@
 {
   "name": "nova-browser",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "type": "module",
   "engines": {
@@ -26,10 +26,10 @@
     "query:batch": "node src/query-batch-cli.js",
     "browser": "electron .",
     "dist": "electron-builder --win nsis",
-    "test:browser": "node --check main.cjs && node --check preload.cjs && node --check public/app.js"
+    "test:browser": "node --check desktop/main.cjs && node --check desktop/preload.cjs && node --check desktop/app.js && node --check public/app.js"
   },
   "productName": "Nova Browser",
-  "main": "main.cjs",
+  "main": "desktop/main.cjs",
   "dependencies": {
     "electron-updater": "^6.6.2"
   },
@@ -42,8 +42,7 @@
     "productName": "Nova Browser",
     "asar": true,
     "files": [
-      "main.cjs",
-      "preload.cjs",
+      "desktop/**/*",
       "src/**/*",
       "public/**/*",
       "package.json",

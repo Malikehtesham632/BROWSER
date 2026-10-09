@@ -1,10 +1,11 @@
-import http from 'node:http';import {timingSafeEqual} from 'node:crypto';import {isIP} from 'node:net';import {pathToFileURL} from 'node:url';import {loadConfig,loadEnvFile} from './config.js';import {createSearchEngine,normalizeQuery} from './search.js';import {OmniError} from './core/errors.js';import {DocumentStore} from './index/store.js';import {OmniCrawler} from './crawler/crawler.js';
+import http from 'node:http';import {timingSafeEqual} from 'node:crypto';import {isIP} from 'node:net';import {fileURLToPath,pathToFileURL} from 'node:url';import {loadConfig,loadEnvFile} from './config.js';import {createSearchEngine,normalizeQuery} from './search.js';import {OmniError} from './core/errors.js';import {DocumentStore} from './index/store.js';import {OmniCrawler} from './crawler/crawler.js';
 import {createGeminiClient} from './ai/gemini.js';
 import {AICache} from './ai/cache.js';
 import {QueryCorpus} from './queries/corpus.js';
 import {createQueryGenerator} from './queries/generator.js';
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
+const APP_ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const publicProviders=p=>Object.fromEntries(Object.entries(p).map(([n,v])=>[n,{ok:v.ok,skipped:Boolean(v.skipped),count:v.count,ms:v.ms}]));const publicSearch=o=>({query:o.query,analysis:o.analysis,results:o.results,providers:publicProviders(o.providers),cached:o.cached,tookMs:o.tookMs});function tokenMatches(h,t){const a=Buffer.from((h||'').replace(/^Bearer\s+/i,'')),b=Buffer.from(t);return a.length===b.length&&timingSafeEqual(a,b)}
 export function securityProblem(config){const {host,apiToken}=config.server;const normalized=String(host||'').replace(/^\[|\]$/g,'').toLowerCase();const loopback=normalized==='localhost'||normalized.endsWith('.localhost')||normalized==='::1'||(isIP(normalized)===4&&Number(normalized.split('.')[0])===127);return loopback||apiToken?null:'Binding to a public interface requires OMNI_API_TOKEN to be configured.';}
 export function createServer(engine,config,deps={}){const problem=securityProblem(config);if(problem)throw new OmniError('INSECURE_BIND',problem,500);const logger=deps.logger??console,now=deps.now??Date.now,hits=new Map(),{allowedOrigins,apiToken,rateLimitPerMinute}=config.server;const queryCorpus=deps.queryCorpus;const queryGenerator=deps.queryGenerator;const limited=ip=>{const t=now(),r=(hits.get(ip)||[]).filter(x=>t-x<60000);r.push(t);hits.set(ip,r);return r.length>rateLimitPerMinute};const send=(res,status,body)=>{if(res.headersSent)return;res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(body));};const cors=(req,res)=>{const o=req.headers.origin;if(o&&(allowedOrigins.includes('*')||allowedOrigins.includes(o))){res.setHeader('Access-Control-Allow-Origin',o);res.setHeader('Vary','Origin');res.setHeader('Access-Control-Allow-Headers','Authorization, Content-Type');res.setHeader('Access-Control-Allow-Methods','GET, OPTIONS');}};
@@ -19,13 +20,13 @@ export function createServer(engine,config,deps={}){const problem=securityProble
  if(u.pathname==='/index/stats')return send(res,200,engine.indexStats());
  return send(res,404,{error:'Not found'});}
  const server=http.createServer(async (req,res)=>{
-  if(req.method==='GET' && (req.url==='/' || req.url==='/index.html')){try{const html=await readFile(path.resolve(process.cwd(),'public/index.html'),'utf8');res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});return res.end(html)}catch(e){logger.error?.(e)}}
+  if(req.method==='GET' && (req.url==='/' || req.url==='/index.html')){try{const html=await readFile(path.resolve(APP_ROOT,'public/index.html'),'utf8');res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store'});return res.end(html)}catch(e){logger.error?.(e)}}
   const publicAsset=req.url==='/app.css'||req.url==='/app.js';
   const browserPage=req.url==='/browser'||req.url==='/browser/';
   const browserAsset=req.url==='/browser/app.js'||req.url==='/browser/style.css';
   if(req.method==='GET'&&(publicAsset||browserPage||browserAsset)){
    const relative=browserPage?'desktop/index.html':browserAsset?path.join('desktop',req.url.slice('/browser/'.length)):path.join('public',req.url.slice(1));
-   try{const file=await readFile(path.resolve(process.cwd(),relative));const contentType=relative.endsWith('.html')?'text/html; charset=utf-8':relative.endsWith('.css')?'text/css; charset=utf-8':relative.endsWith('.js')?'text/javascript; charset=utf-8':'application/octet-stream';res.writeHead(200,{'Content-Type':contentType,'Cache-Control':relative.endsWith('.html')?'no-store':'no-cache'});return res.end(file)}catch(e){logger.error?.(e)}
+   try{const file=await readFile(path.resolve(APP_ROOT,relative));const contentType=relative.endsWith('.html')?'text/html; charset=utf-8':relative.endsWith('.css')?'text/css; charset=utf-8':relative.endsWith('.js')?'text/javascript; charset=utf-8':'application/octet-stream';res.writeHead(200,{'Content-Type':contentType,'Cache-Control':relative.endsWith('.html')?'no-store':'no-cache'});return res.end(file)}catch(e){logger.error?.(e)}
   }
   return route(req,res).catch(e=>{if(e instanceof OmniError)return send(res,e.status,{error:e.message});logger.error?.(e);send(res,500,{error:'Internal error'})})
  });const cleanup=setInterval(()=>{const t=now();for(const[ip,times]of hits)if(times.every(x=>t-x>=60000))hits.delete(ip)},60000);cleanup.unref();server.on('close',()=>clearInterval(cleanup));return server;}
