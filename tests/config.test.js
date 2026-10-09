@@ -47,6 +47,13 @@ test('the stable Gemini model is the last fallback', () => {
   assert.equal(config.ai.fallbackModels.at(-1), 'gemini-3.5-flash');
 });
 
+test('SearXNG has working public defaults when no provider configuration is supplied', () => {
+  const config = withEnv({ SEARXNG_INSTANCES: undefined, SEARXNG_URL: undefined, SEARXNG_ENABLED: undefined }, loadConfig);
+  assert.equal(config.searxngEnabled, true);
+  assert.ok(config.searxngInstances.length >= 2);
+  assert.ok(config.searxngInstances.every(url => /^https:\/\//.test(url)));
+});
+
 test('SearXNG accepts multiple instances from JSON and enables configured instances', () => {
   const config = withEnv({
     SEARXNG_ENABLED: 'true',
