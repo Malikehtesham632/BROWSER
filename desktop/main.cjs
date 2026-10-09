@@ -200,9 +200,8 @@ function createTab(initialUrl = null, { pinned = false } = {}) {
     if (candidate) tab.favicon = candidate;
     sendState();
   });
-  contents.on('audio-state-changed', (_event, { audible, muted }) => {
-    tab.audible = Boolean(audible);
-    tab.muted = Boolean(muted);
+  contents.on('audio-state-changed', (_event, audible) => {
+    tab.audible = typeof audible === 'boolean' ? audible : contents.isCurrentlyAudible();
     sendState();
   });
   contents.on('did-stop-loading', () => {

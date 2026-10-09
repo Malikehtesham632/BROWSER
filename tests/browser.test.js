@@ -12,6 +12,13 @@ test('Electron browser shell uses context isolation and disables renderer Node a
   assert.match(main, /sandbox:\s*true/);
 });
 
+test('audio state changes handle Electron boolean or missing payloads safely', () => {
+  const main = read('desktop/main.cjs');
+  assert.match(main, /contents\.on\('audio-state-changed',\s*\(_event,\s*audible\)\s*=>\s*\{/);
+  assert.match(main, /typeof audible === 'boolean' \? audible : contents\.isCurrentlyAudible\(\)/);
+  assert.doesNotMatch(main, /audio-state-changed',\s*\(_event,\s*\{\s*audible/);
+});
+
 test('Electron browser denies dangerous permission requests by default', () => {
   const main = read('desktop/main.cjs');
   assert.match(main, /setPermissionRequestHandler/);
