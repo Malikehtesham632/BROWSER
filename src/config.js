@@ -1,9 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 
+// Public SearXNG instances are a no-key fallback. Override with
+// SEARXNG_INSTANCES in .env when a more controlled deployment is available.
 const DEFAULT_SEARXNG_INSTANCES = [
+  "https://searx.ononoki.org/",
   "https://search.ctq.ro/",
-  "https://searx.ononoki.org/"
+  "https://www.isci.si/"
 ];
 
 export function loadEnvFile(file = path.resolve(".env")) {
@@ -82,7 +85,9 @@ export function loadConfig() {
     searxngInstances: searxngInstancesList,
     searxngUrl: searxngInstancesList[0] || "",
     searxngRetries: num("SEARXNG_RETRIES", 1, 0, 3),
-    providerTimeoutMs: num("PROVIDER_TIMEOUT_MS", 6000, 1),
+    // Public instances can be slower than a private provider; allow the
+    // fallback enough time to return actual query results.
+    providerTimeoutMs: num("PROVIDER_TIMEOUT_MS", 10000, 1),
     scrapeTimeoutMs: num("SCRAPE_TIMEOUT_MS", 30000, 1),
     cacheTtlMs: num("CACHE_TTL_SECONDS", 900) * 1000,
     scrapeCacheTtlMs: num("SCRAPE_CACHE_TTL_SECONDS", 3600) * 1000,
