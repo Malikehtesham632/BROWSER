@@ -57,12 +57,15 @@ function startEngine() {
 }
 
 async function loadNovaUI() {
-  const cssPath = path.join(app.getAppPath(), 'public', 'firefox-ui.css');
+  const cssFiles = ['firefox-ui.css', 'search-premium.css'];
   try {
-    const css = fs.readFileSync(cssPath, 'utf8');
-    await mainWindow.webContents.insertCSS(css);
+    for (const file of cssFiles) {
+      const cssPath = path.join(app.getAppPath(), 'public', file);
+      const css = fs.readFileSync(cssPath, 'utf8');
+      await mainWindow.webContents.insertCSS(css);
+    }
   } catch (error) {
-    console.error('[Nova UI] Failed to load Firefox-inspired chrome layer:', error);
+    console.error('[Nova UI] Failed to load browser UI styles:', error);
   }
 }
 
