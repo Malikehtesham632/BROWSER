@@ -1,0 +1,327 @@
+/* Nova Browser — Firefox-inspired chrome refinement.
+   Layered on top of app.css so existing behavior/components remain intact. */
+
+:root {
+  --nova-chrome-height: 48px;
+  --nova-toolbar-height: 48px;
+  --nova-tab-radius: 10px 10px 0 0;
+  --nova-url-radius: 22px;
+  --nova-control-size: 34px;
+}
+
+/* Firefox-like browser frame: quiet chrome, clear hierarchy, compact controls. */
+.chrome {
+  background: var(--frame);
+  border: 0;
+  box-shadow: inset 0 -1px 0 var(--line);
+}
+
+.tabstrip {
+  height: var(--nova-chrome-height);
+  padding: 6px 8px 0 10px;
+  gap: 4px;
+  align-items: flex-end;
+  background: var(--frame);
+}
+
+.tabs {
+  height: 42px;
+  align-items: flex-end;
+  gap: 2px;
+  max-width: calc(100% - 44px);
+}
+
+.tab {
+  height: 38px;
+  min-width: 92px;
+  max-width: 240px;
+  flex: 1 1 220px;
+  margin: 0;
+  padding: 0 7px 0 12px;
+  gap: 8px;
+  border-radius: var(--nova-tab-radius);
+  background: transparent;
+  color: var(--muted);
+  box-shadow: none;
+  transition: background .14s ease, color .14s ease, box-shadow .14s ease;
+}
+
+.tab:hover {
+  background: var(--tab-hover);
+}
+
+.tab[aria-selected="true"] {
+  background: var(--tab-selected);
+  color: var(--text);
+  box-shadow: 0 -1px 0 var(--line), 0 1px 4px rgba(0,0,0,.12);
+}
+
+.tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--accent);
+  opacity: .9;
+}
+
+.tab .tab-title {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.tab .tab-close {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity .12s ease, background .12s ease;
+}
+
+.tab:hover .tab-close,
+.tab[aria-selected="true"] .tab-close {
+  opacity: 1;
+}
+
+.tab .tab-close:hover {
+  background: var(--hover);
+}
+
+.new-tab {
+  width: 32px;
+  height: 32px;
+  margin: 0 0 3px 2px;
+  border-radius: 50%;
+}
+
+.toolbar {
+  height: var(--nova-toolbar-height);
+  padding: 0 10px;
+  gap: 5px;
+  background: var(--toolbar);
+  border-top: 0;
+  border-bottom: 1px solid var(--line);
+  box-shadow: none;
+}
+
+.nav-actions,
+.toolbar-actions {
+  gap: 1px;
+}
+
+.icon-btn {
+  width: var(--nova-control-size);
+  height: var(--nova-control-size);
+  border-radius: 8px;
+  transition: background .12s ease, color .12s ease, transform .08s ease;
+}
+
+.icon-btn:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+.icon-btn:active:not(:disabled) {
+  background: var(--press);
+  transform: scale(.96);
+}
+
+/* Firefox-style address/search field: prominent, rounded, but not oversized. */
+.urlbar {
+  height: 38px;
+  margin: 0 7px;
+  padding: 0 5px 0 7px;
+  gap: 5px;
+  border-radius: var(--nova-url-radius);
+  background: var(--field);
+  box-shadow: inset 0 0 0 1px transparent;
+  transition: background .14s ease, box-shadow .14s ease;
+}
+
+.urlbar:hover {
+  background: var(--field-hover);
+}
+
+.urlbar:focus-within {
+  background: var(--field-focus);
+  box-shadow: 0 0 0 2px var(--focus);
+}
+
+.urlbar-id {
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+}
+
+.urlbar input {
+  font-size: 14px;
+}
+
+.urlbar input::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.urlbar .icon-btn.sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.suggest {
+  top: calc(100% + 7px);
+  padding: 6px;
+  border-radius: 12px;
+  background: var(--toolbar);
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 32px rgba(0,0,0,.22);
+}
+
+.sg {
+  height: 40px;
+  padding: 0 11px;
+  border-radius: 7px;
+}
+
+.sg[aria-selected="true"] {
+  background: var(--accent);
+}
+
+/* Application menu: Firefox-like dense command panel. */
+.popup {
+  top: calc(var(--nova-chrome-height) + var(--nova-toolbar-height) + 8px);
+  right: 10px;
+  width: 300px;
+  padding: 7px;
+  border-radius: 12px;
+  background: var(--toolbar);
+  border: 1px solid var(--line);
+  box-shadow: 0 16px 40px rgba(0,0,0,.24);
+}
+
+.popup button {
+  height: 38px;
+  padding: 0 11px;
+  border-radius: 7px;
+  gap: 11px;
+}
+
+.popup button:hover,
+.popup button:focus-visible {
+  background: var(--hover);
+}
+
+.popup .sep {
+  margin: 6px 3px;
+}
+
+/* Keep the content area visually separated from browser chrome. */
+.body {
+  background: var(--frame);
+}
+
+.page {
+  background: var(--page);
+}
+
+/* New-tab page: retain Nova branding but use Firefox-like restrained proportions. */
+.newtab {
+  padding: 48px 24px 64px;
+}
+
+.nt-inner {
+  max-width: 760px;
+  margin-top: -7vh;
+}
+
+.brand {
+  margin-bottom: 24px;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.brand .logo {
+  width: 42px;
+  height: 42px;
+}
+
+.nt-search {
+  height: 50px;
+  border-radius: 25px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.16), 0 0 0 1px var(--line);
+}
+
+.shortcuts {
+  margin-top: 30px;
+}
+
+.tile {
+  border-radius: 10px;
+}
+
+/* Firefox-like responsive compression. */
+@media (max-width: 900px) {
+  .tab {
+    min-width: 74px;
+    max-width: 200px;
+  }
+
+  .tab .tab-title {
+    font-size: 12px;
+  }
+
+  .home-btn,
+  #homeBtn {
+    display: none;
+  }
+
+  .toolbar {
+    padding-inline: 6px;
+  }
+
+  .urlbar {
+    margin-inline: 4px;
+  }
+}
+
+@media (max-width: 700px) {
+  .tab {
+    min-width: 48px;
+    max-width: 112px;
+    justify-content: center;
+    padding-inline: 7px;
+  }
+
+  .tab .tab-title {
+    display: none;
+  }
+
+  .tab[aria-selected="true"] .tab-title {
+    display: block;
+  }
+
+  .tab[aria-selected="true"] {
+    justify-content: flex-start;
+  }
+
+  #sidebarBtn,
+  #downloadsBtn {
+    display: none;
+  }
+
+  .urlbar {
+    min-width: 120px;
+  }
+}
+
+/* Reduce motion without disabling usability. */
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .icon-btn,
+  .urlbar,
+  .suggest {
+    transition: none !important;
+  }
+}

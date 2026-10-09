@@ -1,6 +1,7 @@
 const { app, BrowserWindow, dialog, ipcMain, session, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { spawn } = require('node:child_process');
+const fs = require('node:fs');
 const path = require('node:path');
 
 const PORT = Number(process.env.OMNI_DESKTOP_PORT || 8787);
@@ -53,6 +54,16 @@ function startEngine() {
   engineProcess.stderr.on('data', data => console.error(`[Omni] ${data}`));
 }
 
+async function loadNovaUI() {
+  const cssPath = path.join(app.getAppPath(), 'public', 'firefox-ui.css');
+  try {
+    const css = fs.readFileSync(cssPath, 'utf8');
+    await mainWindow.webContents.insertCSS(css);
+  } catch (error) {
+    console.error('[Nova UI] Failed to load Firefox-inspired chrome layer:', error);
+  }
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1440,
@@ -83,7 +94,11 @@ function createWindow() {
     if (/^https?:\/\//i.test(url)) return { action: 'allow' };
     return { action: 'deny' };
   });
-  mainWindow.loadURL(`http://${HOST}:${PORT}`);
+
+  mainWindow.loadURL(`http://${HOST}:${PORT}`).then(loadNovaUI).catch(error => {
+    console.error('[Nova UI] Failed to load browser shell:', error);
+  });
+
   mainWindow.on('closed', () => { mainWindow = null; });
 }
 
