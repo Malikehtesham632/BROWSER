@@ -1,6 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 
+const DEFAULT_SEARXNG_INSTANCES = [
+  "https://search.ctq.ro/",
+  "https://searx.ononoki.org/"
+];
+
 export function loadEnvFile(file = path.resolve(".env")) {
   try {
     const text = fs.readFileSync(file, "utf8");
@@ -30,7 +35,7 @@ const domains = (raw, fallback) => raw === undefined ? fallback : raw.split(",")
 function searxngInstances() {
   const raw = process.env.SEARXNG_INSTANCES;
   let instances;
-  if (raw === undefined) instances = process.env.SEARXNG_URL ? [process.env.SEARXNG_URL] : [];
+  if (raw === undefined) instances = process.env.SEARXNG_URL ? [process.env.SEARXNG_URL] : DEFAULT_SEARXNG_INSTANCES;
   else if (!raw.trim()) instances = [];
   else if (raw.trim().startsWith("[")) {
     try {
@@ -77,7 +82,7 @@ export function loadConfig() {
     searxngInstances: searxngInstancesList,
     searxngUrl: searxngInstancesList[0] || "",
     searxngRetries: num("SEARXNG_RETRIES", 1, 0, 3),
-    providerTimeoutMs: num("PROVIDER_TIMEOUT_MS", 4000, 1),
+    providerTimeoutMs: num("PROVIDER_TIMEOUT_MS", 6000, 1),
     scrapeTimeoutMs: num("SCRAPE_TIMEOUT_MS", 30000, 1),
     cacheTtlMs: num("CACHE_TTL_SECONDS", 900) * 1000,
     scrapeCacheTtlMs: num("SCRAPE_CACHE_TTL_SECONDS", 3600) * 1000,
