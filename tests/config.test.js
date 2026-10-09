@@ -6,7 +6,8 @@ function withEnv(values, run) {
   const saved = {};
   for (const key of Object.keys(values)) {
     saved[key] = process.env[key];
-    process.env[key] = values[key];
+    if (values[key] === undefined) delete process.env[key];
+    else process.env[key] = values[key];
   }
   try {
     return run();
