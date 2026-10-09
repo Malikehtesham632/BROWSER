@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Nova Browser</title>
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="novaGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a84ff"/><stop offset="1" stop-color="#8a4dff"/></linearGradient>
+    <symbol id="i-back" viewBox="0 0 16 16"><path d="M10 3 5 8l5 5"/></symbol>
+    <symbol id="i-forward" viewBox="0 0 16 16"><path d="m6 3 5 5-5 5"/></symbol>
+    <symbol id="i-reload" viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5V5h-2.5"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 16 16"><path d="m4 4 8 8M12 4l-8 8"/></symbol>
+    <symbol id="i-close" viewBox="0 0 16 16"><path d="m4.5 4.5 7 7M11.5 4.5l-7 7"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10"/></symbol>
+    <symbol id="i-star" viewBox="0 0 16 16"><path d="m8 1.9 1.9 3.9 4.3.6-3.1 3 .7 4.3L8 11.7l-3.8 2 .7-4.3-3.1-3 4.3-.6z"/></symbol>
+    <symbol id="i-sidebar" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5"/><path d="M6.5 3v10"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 16 16"><path d="M2.5 4h11M2.5 8h11M2.5 12h11"/></symbol>
+    <symbol id="i-search" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.4"/><path d="m10.3 10.3 3.7 3.7"/></symbol>
+    <symbol id="i-history" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.8"/><path d="M8 4.8V8l2.3 1.4"/></symbol>
+    <symbol id="i-download" viewBox="0 0 16 16"><path d="M8 2.5v7.5M4.8 7 8 10.2 11.2 7M3 13h10"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 16 16"><path d="M4 2.5h8v11L8 10.6 4 13.5z"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 16 16"><path d="M2.5 5h6M12 5h1.5M2.5 11H4M8 11h5.5"/><circle cx="10.2" cy="5" r="1.7"/><circle cx="6" cy="11" r="1.7"/></symbol>
+    <symbol id="i-home" viewBox="0 0 16 16"><path d="M2.5 7.6 8 3l5.5 4.6M4 6.7V13h8V6.7"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.6"/><path d="M8 1.8v1.4M8 12.8v1.4M1.8 8h1.4M12.8 8h1.4M3.6 3.6l1 1M11.4 11.4l1 1M12.4 3.6l-1 1M4.6 11.4l-1 1"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 16 16"><path d="M13.2 9.6A5.6 5.6 0 1 1 6.4 2.8a4.6 4.6 0 0 0 6.8 6.8z"/></symbol>
+    <symbol id="i-auto" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.6"/><path d="M8 2.4v11.2"/><path d="M8 2.4a5.6 5.6 0 0 1 0 11.2z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 16 16"><path d="M3 4.5h10M6.4 4.5V3h3.2v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/></symbol>
+    <symbol id="i-external" viewBox="0 0 16 16"><path d="M9 3h4v4M13 3 7.6 8.4M11 9.4V13H3V5h3.6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 16 16"><path d="m3.5 8.4 3 3 6-6.4"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.8"/><path d="M2.2 8h11.6M8 2.2c2 1.7 2.8 3.6 2.8 5.8S10 12.1 8 13.8C6 12.1 5.2 10.2 5.2 8S6 3.9 8 2.2z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 16 16"><path d="M3 8h9.5M8.5 4 12.5 8l-4 4"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 16 16"><path d="M8 2.5 14 13H2z"/><path d="M8 6.5v3M8 11.3v.2"/></symbol>
+  </defs>
+</svg>
+
+<div class="app" id="app">
+  <header class="chrome">
+    <!-- Tab strip: draggable title bar in the desktop app -->
+    <div class="tabstrip" id="tabstrip">
+      <div class="tabs" id="tabs" role="tablist" aria-label="Open tabs"></div>
+      <button class="icon-btn new-tab" id="newTabBtn" title="Open a new tab (Ctrl+T)" aria-label="Open a new tab"><svg class="ic"><use href="#i-plus"/></svg></button>
+    </div>
+
+    <div class="toolbar" id="toolbar">
+      <div class="nav-actions">
+        <button class="icon-btn" id="backBtn" title="Go back (Alt+Left)" aria-label="Go back" disabled><svg class="ic"><use href="#i-back"/></svg></button>
+        <button class="icon-btn" id="forwardBtn" title="Go forward (Alt+Right)" aria-label="Go forward" disabled><svg class="ic"><use href="#i-forward"/></svg></button>
+        <button class="icon-btn" id="reloadBtn" title="Reload (Ctrl+R)" aria-label="Reload"><svg class="ic"><use href="#i-reload"/></svg></button>
+        <button class="icon-btn" id="homeBtn" title="New tab page" aria-label="Home"><svg class="ic"><use href="#i-home"/></svg></button>
+      </div>
+
+      <form class="urlbar" id="searchForm" role="search" autocomplete="off">
+        <span class="urlbar-id" id="urlIcon"><svg class="ic"><use href="#i-search"/></svg></span>
+        <input id="searchInput" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="suggest" aria-autocomplete="list" placeholder="Search with Omni or enter address" aria-label="Search or enter address">
+        <button type="button" class="icon-btn sm hidden" id="clearBtn" title="Clear" aria-label="Clear"><svg class="ic"><use href="#i-close"/></svg></button>
+        <button type="button" class="icon-btn sm" id="starBtn" title="Bookmark this search (Ctrl+D)" aria-label="Bookmark this search" aria-pressed="false"><svg class="ic"><use href="#i-star"/></svg></button>
+        <div class="suggest hidden" id="suggest" role="listbox"></div>
+      </form>
+
+      <div class="toolbar-actions">
+        <button class="icon-btn" id="sidebarBtn" title="Toggle sidebar (Ctrl+B)" aria-label="Toggle sidebar" aria-pressed="false"><svg class="ic"><use href="#i-sidebar"/></svg></button>
+        <button class="icon-btn" id="downloadsBtn" title="Downloads (Ctrl+J)" aria-label="Downloads"><svg class="ic"><use href="#i-download"/></svg></button>
+        <button class="icon-btn menu-btn" id="menuBtn" title="Open application menu" aria-label="Open application menu" aria-haspopup="true" aria-expanded="false"><svg class="ic"><use href="#i-menu"/></svg><i class="badge hidden" id="updateBadge"></i></button>
+      </div>
+    </div>
+    <div class="loadbar" id="loadbar" aria-hidden="true"><i id="loadbarFill"></i></div>
+  </header>
+
+  <!-- Application menu -->
+  <div class="popup hidden" id="appMenu" role="menu">
+    <button role="menuitem" data-go="newtab"><svg class="ic"><use href="#i-plus"/></svg><span>New tab</span><kbd>Ctrl+T</kbd></button>
+    <div class="sep"></div>
+    <button role="menuitem" data-go="bookmarks"><svg class="ic"><use href="#i-bookmark"/></svg><span>Bookmarks</span><kbd>Ctrl+Shift+O</kbd></button>
+    <button role="menuitem" data-go="history"><svg class="ic"><use href="#i-history"/></svg><span>History</span><kbd>Ctrl+H</kbd></button>
+    <button role="menuitem" data-go="downloads"><svg class="ic"><use href="#i-download"/></svg><span>Downloads</span><kbd>Ctrl+J</kbd></button>
+    <div class="sep"></div>
+    <button role="menuitem" data-go="sidebar"><svg class="ic"><use href="#i-sidebar"/></svg><span>Sidebar</span><kbd>Ctrl+B</kbd></button>
+    <button role="menuitem" data-go="settings"><svg class="ic"><use href="#i-settings"/></svg><span>Settings</span><kbd>Ctrl+,</kbd></button>
+    <button role="menuitem" data-go="updates"><svg class="ic"><use href="#i-reload"/></svg><span>Check for updates</span></button>
+  </div>
+
+  <div class="body">
+    <aside class="sidebar collapsed" id="sidebar" aria-label="Sidebar">
+      <div class="sb-head">
+        <div class="seg" id="sbSeg" role="tablist">
+          <button role="tab" class="on" data-sb="bookmarks">Bookmarks</button>
+          <button role="tab" data-sb="history">History</button>
+        </div>
+        <button class="icon-btn sm" id="sbClose" title="Close sidebar" aria-label="Close sidebar"><svg class="ic"><use href="#i-close"/></svg></button>
+      </div>
+      <label class="field sb-filter"><svg class="ic"><use href="#i-search"/></svg><input id="sbFilter" placeholder="Search bookmarks" aria-label="Filter sidebar list"></label>
+      <div class="sb-list" id="sbList"></div>
+    </aside>
+
+    <main class="page" id="page">
+      <!-- New tab -->
+      <section class="view newtab" id="newtabView" aria-label="New tab">
+        <div class="nt-inner">
+          <div class="brand"><svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="url(#novaGrad)"/><path d="M12 4.2l1.7 6.1 6.1 1.7-6.1 1.7L12 19.8l-1.7-6.1L4.2 12l6.1-1.7z" fill="#fff"/></svg><span>Nova</span></div>
+          <form class="nt-search" id="heroForm" role="search">
+            <svg class="ic"><use href="#i-search"/></svg>
+            <input id="heroInput" placeholder="Search with Omni or enter address" autocomplete="off" spellcheck="false" aria-label="Search the web">
+            <button type="submit" class="go" aria-label="Search"><svg class="ic"><use href="#i-arrow"/></svg></button>
+          </form>
+          <div class="shortcuts" id="shortcuts"></div>
+        </div>
+        <div class="engine-status" id="engineStatus" role="status"></div>
+      </section>
+
+      <!-- Search results -->
+      <section class="view search hidden" id="searchView" aria-label="Search results">
+        <div class="search-layout">
+          <div class="results-col">
+            <div class="summary" id="summaryLine" aria-live="polite"></div>
+            <div class="chips" id="sourceChips" aria-label="Filter by source"></div>
+            <div id="results"></div>
+          </div>
+          <aside class="side-col">
+            <div class="card"><h2>Query</h2><div id="queryIntel" class="intel"></div></div>
+            <div class="card"><h2>Activity</h2><ol class="activity" id="activityLog"></ol></div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- History / Bookmarks / Downloads -->
+      <section class="view library hidden" id="libraryView" aria-label="Library"></section>
+
+      <!-- Settings -->
+      <section class="view settings hidden" id="settingsView" aria-label="Settings">
+        <div class="settings-inner">
+          <h1>Settings</h1>
+
+          <div class="card setting">
+            <h2>Appearance</h2>
+            <div class="row"><div><b>Theme</b><p>Follow your system, or pick one.</p></div>
+              <div class="seg" id="themeSeg" role="radiogroup" aria-label="Theme">
+                <button role="radio" data-theme="auto"><svg class="ic"><use href="#i-auto"/></svg>System</button>
+                <button role="radio" data-theme="light"><svg class="ic"><use href="#i-sun"/></svg>Light</button>
+                <button role="radio" data-theme="dark"><svg class="ic"><use href="#i-moon"/></svg>Dark</button>
+              </div></div>
+          </div>
+
+          <div class="card setting">
+            <h2>Search</h2>
+            <div class="row"><div><b>Results per search</b><p>More results take slightly longer to rank.</p></div>
+              <select id="numSelect" class="select" aria-label="Results per search"><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="50">50</option></select></div>
+            <div class="row"><div><b>Omni Engine</b><p id="engineDetail">Checking…</p></div>
+              <button class="btn" id="engineRecheck">Check again</button></div>
+          </div>
+
+          <div class="card setting">
+            <h2>Privacy</h2>
+            <div class="row"><div><b>Search history</b><p>Stored only on this device.</p></div><button class="btn" id="clearHistoryBtn">Clear history</button></div>
+            <div class="row"><div><b>Bookmarks</b><p>Saved searches and pages.</p></div><button class="btn" id="clearBookmarksBtn">Remove all</button></div>
+          </div>
+
+          <div class="card setting">
+            <h2>Nova updates</h2>
+            <div class="row"><div><b id="browserVersion">Nova Browser</b><p id="updateStatus" class="update-status">Updates are available in the installed Nova Browser.</p></div>
+              <button class="btn primary" id="updateBtn">Check for updates</button></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "Omni Engine starter relevance benchmark",
+  "version": 1,
+  "description": "Edit the relevance judgments to match your own evaluation criteria. A result is relevant when its canonical URL matches relevantUrls or its hostname matches relevantDomains.",
+  "queries": [
+    {"id":"q01","query":"Python FastAPI authentication","relevantDomains":["fastapi.tiangolo.com","python.org"],"relevantUrls":[]},
+    {"id":"q02","query":"Python asyncio tutorial","relevantDomains":["docs.python.org","python.org"],"relevantUrls":[]},
+    {"id":"q03","query":"PostgreSQL indexing","relevantDomains":["postgresql.org"],"relevantUrls":[]},
+    {"id":"q04","query":"Docker FastAPI deployment","relevantDomains":["docs.docker.com","fastapi.tiangolo.com"],"relevantUrls":[]},
+    {"id":"q05","query":"Git branching tutorial","relevantDomains":["git-scm.com","github.com"],"relevantUrls":[]},
+    {"id":"q06","query":"HTML accessibility","relevantDomains":["developer.mozilla.org","w3.org"],"relevantUrls":[]},
+    {"id":"q07","query":"JavaScript fetch API","relevantDomains":["developer.mozilla.org","javascript.info"],"relevantUrls":[]},
+    {"id":"q08","query":"CSS grid layout","relevantDomains":["developer.mozilla.org","w3.org"],"relevantUrls":[]}
+  ]
+}

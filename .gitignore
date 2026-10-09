@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+node_modules/
+__pycache__/
+dist/
+release/
+
+data/query-corpus.json
+data/query-corpus.json.tmp

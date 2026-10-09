@@ -1,0 +1,1 @@
+import {loadConfig,loadEnvFile} from './config.js';import {CrawlFrontier} from './crawler/frontier.js';loadEnvFile();const c=loadConfig(),f=new CrawlFrontier(c.frontierFile);await f.init();console.log(JSON.stringify(f.stats(),null,2));

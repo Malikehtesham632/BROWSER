@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; connect-src 'self'; object-src 'none'; base-uri 'none';">
+  <title>Nova Browser</title>
+  <link rel="stylesheet" href="/browser/style.css">
+</head>
+<body>
+  <header class="browser-chrome">
+    <div class="tab-strip">
+      <div id="tabs" class="tabs" role="tablist" aria-label="Browser tabs"></div>
+      <button id="new-tab" class="chrome-button new-tab" type="button" aria-label="New tab" title="New tab (Ctrl+T)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <div class="window-brand"><span class="brand-mark" aria-hidden="true">N</span><span>Nova</span></div>
+    </div>
+    <div class="toolbar">
+      <div class="nav-controls">
+        <button id="back" class="chrome-button" type="button" aria-label="Back" title="Back (Alt+Left)" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5-7 7 7 7"/></svg>
+        </button>
+        <button id="forward" class="chrome-button" type="button" aria-label="Forward" title="Forward (Alt+Right)" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 5 7 7-7 7"/></svg>
+        </button>
+        <button id="reload" class="chrome-button" type="button" aria-label="Reload" title="Reload (Ctrl+R)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4.9 9a7.5 7.5 0 0 1 12.4-2.7L20 9M4 17v-5h5m-1.4 2.7A7.5 7.5 0 0 0 20 15"/></svg>
+        </button>
+        <button id="home" class="chrome-button" type="button" aria-label="Home" title="New tab page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.5 10 8.5-7 8.5 7v10.5h-6v-7h-5v7h-6z"/></svg>
+        </button>
+      </div>
+      <form id="address-form" class="address-form" autocomplete="off">
+        <span class="address-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+        </span>
+        <input id="address" type="text" aria-label="Search or enter address" placeholder="Search or enter address" spellcheck="false">
+        <button id="clear-address" class="chrome-button clear-address" type="button" aria-label="Clear address" title="Clear address" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+        </button>
+      </form>
+      <button id="theme-toggle" class="chrome-button theme-toggle" type="button" aria-label="Switch to light theme" title="Switch theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.3A8.5 8.5 0 0 1 8.7 3.5 8.5 8.5 0 1 0 20.5 15.3Z"/></svg>
+      </button>
+      <button id="browser-menu-toggle" class="chrome-button menu-toggle" type="button" aria-label="Open browser menu" aria-haspopup="true" aria-expanded="false" aria-controls="browser-menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <section id="browser-menu" class="browser-menu" aria-label="Nova Browser menu" hidden>
+      <div class="menu-profile">
+        <span class="menu-brand-mark" aria-hidden="true">N</span>
+        <div class="menu-profile-copy">
+          <strong>Nova Browser</strong>
+          <span id="menu-search-status">Connecting to search…</span>
+        </div>
+        <button id="menu-close" class="menu-close" type="button" aria-label="Close browser menu">×</button>
+      </div>
+      <div class="menu-engine-card">
+        <div class="engine-card-heading">
+          <span class="engine-card-icon" aria-hidden="true">✳</span>
+          <div><strong>Search the whole web</strong><span id="menu-engine-summary">Omni search</span></div>
+        </div>
+        <div id="menu-engine-list" class="engine-list" aria-live="polite"></div>
+        <span id="menu-index-status" class="menu-index-status"></span>
+      </div>
+      <div class="menu-group">
+        <button class="menu-item" type="button" data-menu-action="new-tab"><span class="menu-item-icon">＋</span><span>New tab</span><kbd>Ctrl+T</kbd></button>
+        <button class="menu-item" type="button" data-menu-action="close-tab"><span class="menu-item-icon">×</span><span>Close tab</span><kbd>Ctrl+W</kbd></button>
+        <button class="menu-item" type="button" data-menu-action="reload"><span class="menu-item-icon">↻</span><span>Reload page</span><kbd>Ctrl+R</kbd></button>
+        <button class="menu-item" type="button" data-menu-action="home"><span class="menu-item-icon">⌂</span><span>New tab page</span></button>
+      </div>
+      <div class="menu-group find-group">
+        <button id="menu-find-open" class="menu-item" type="button"><span class="menu-item-icon">⌕</span><span>Find in page</span><kbd>Ctrl+F</kbd></button>
+        <form id="menu-find-form" class="menu-find-form" hidden>
+          <input id="menu-find-query" type="search" placeholder="Find on this page" aria-label="Find in page">
+          <span id="menu-find-count" class="menu-find-count"></span>
+          <button type="button" id="menu-find-previous" aria-label="Previous match" title="Previous match">↑</button>
+          <button type="button" id="menu-find-next" aria-label="Next match" title="Next match">↓</button>
+          <button type="button" id="menu-find-close" aria-label="Close find bar" title="Close find bar">×</button>
+        </form>
+      </div>
+      <div class="menu-group">
+        <div class="menu-zoom-row">
+          <span class="menu-item-icon" aria-hidden="true">⌕</span><span>Zoom</span>
+          <button type="button" id="zoom-out" aria-label="Zoom out" title="Zoom out">−</button>
+          <button type="button" id="zoom-reset" aria-label="Reset zoom" title="Reset zoom">100%</button>
+          <button type="button" id="zoom-in" aria-label="Zoom in" title="Zoom in">+</button>
+          <button type="button" id="fullscreen-toggle" aria-label="Toggle full screen" title="Toggle full screen">⛶</button>
+        </div>
+        <button class="menu-item" type="button" data-menu-action="theme"><span class="menu-item-icon theme-menu-icon">◐</span><span id="menu-theme-label">Switch to light theme</span></button>
+        <button class="menu-item" type="button" data-menu-action="shortcuts"><span class="menu-item-icon">⌨</span><span>Keyboard shortcuts</span><span class="menu-chevron">›</span></button>
+      </div>
+      <div class="menu-group menu-footer-group">
+        <div id="menu-shortcuts" class="menu-shortcuts" hidden>
+          <p><span>Focus address bar</span><kbd>Ctrl+L</kbd></p>
+          <p><span>New tab</span><kbd>Ctrl+T</kbd></p>
+          <p><span>Find in page</span><kbd>Ctrl+F</kbd></p>
+          <p><span>Back / forward</span><kbd>Alt+← / →</kbd></p>
+        </div>
+        <button class="menu-item" type="button" data-menu-action="about"><span class="menu-item-icon">ⓘ</span><span>About Nova Browser</span><span class="menu-chevron">›</span></button>
+        <button class="menu-item menu-exit" type="button" data-menu-action="exit"><span class="menu-item-icon">⇥</span><span>Exit Nova Browser</span><kbd>Alt+F4</kbd></button>
+      </div>
+    </section>
+  </header>
+  <main id="home-view" class="home-view">
+    <section id="home-landing" class="home-landing">
+      <div class="home-brand" aria-label="Nova Browser">
+        <span class="home-brand-mark" aria-hidden="true">N</span>
+        <span>Nova</span>
+      </div>
+      <h1>Search the web</h1>
+      <p class="home-copy">One search. A wider view.</p>
+      <form id="hero-form" class="hero-form" autocomplete="off">
+        <span class="search-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+        </span>
+        <input id="hero-search" type="text" aria-label="Search the web" placeholder="Search anything" spellcheck="false">
+        <button type="submit" aria-label="Search the web" title="Search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </button>
+      </form>
+      <div class="home-shortcuts" aria-label="Try a search">
+        <button type="button" data-query="Python">Python</button>
+        <button type="button" data-query="JavaScript">JavaScript</button>
+        <button type="button" data-query="World news">World news</button>
+      </div>
+      <section class="ai-explore" aria-labelledby="ai-title">
+        <div class="ai-copy">
+          <span class="ai-badge" aria-hidden="true">AI</span>
+          <div>
+            <h2 id="ai-title">Explore a topic</h2>
+            <p>Get fresh search ideas related to what you want to know.</p>
+          </div>
+        </div>
+        <button id="ai-generate" type="button" class="ai-button">
+          <span class="ai-button-label">Generate ideas</span>
+          <span class="button-spinner" aria-hidden="true"></span>
+        </button>
+        <p id="ai-status" class="ai-status" role="status" aria-live="polite"></p>
+        <div id="ai-queries" class="ai-queries" aria-label="Generated search ideas" hidden></div>
+      </section>
+      <p id="home-status" class="home-status" role="status" aria-live="polite"></p>
+    </section>
+    <section id="results-section" class="results-section" hidden>
+      <div class="results-heading">
+        <div>
+          <p class="section-label">WEB RESULTS</p>
+          <h2 id="results-title">Results</h2>
+        </div>
+        <span id="results-count" class="results-count"></span>
+      </div>
+      <div id="search-loading" class="search-loading" role="status" aria-live="polite" aria-busy="true" hidden>
+        <div class="loading-visual" aria-hidden="true">
+          <span class="loading-orbit orbit-a"></span>
+          <span class="loading-orbit orbit-b"></span>
+          <span class="loading-orbit orbit-c"></span>
+          <span class="loading-core"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.2 4.2"/></svg></span>
+          <span class="loading-spark spark-one"></span>
+          <span class="loading-spark spark-two"></span>
+          <span class="loading-spark spark-three"></span>
+        </div>
+        <div class="loading-copy">
+          <p class="loading-eyebrow">OMNI SEARCH</p>
+          <h3>Finding the right pages<span class="loading-ellipsis" aria-hidden="true"></span></h3>
+          <p id="search-loading-query" class="loading-query">Searching across your connected sources</p>
+          <div id="search-provider-progress" class="search-provider-progress" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div id="search-skeletons" class="search-skeletons" aria-hidden="true" hidden>
+        <div class="skeleton-result"><span class="skeleton-line skeleton-url"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-copy"></span><span class="skeleton-line skeleton-copy skeleton-copy-short"></span></div>
+        <div class="skeleton-result"><span class="skeleton-line skeleton-url"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-copy"></span><span class="skeleton-line skeleton-copy skeleton-copy-short"></span></div>
+        <div class="skeleton-result"><span class="skeleton-line skeleton-url"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-copy"></span><span class="skeleton-line skeleton-copy skeleton-copy-short"></span></div>
+      </div>
+      <p id="results-message" class="results-message" role="status" aria-live="polite" hidden></p>
+      <div id="results-list" class="results-list"></div>
+    </section>
+    <footer class="home-footer"><span>Nova Browser</span><span>Search the web with Omni</span></footer>
+  </main>
+  <dialog id="first-run" class="onboarding">
+    <div class="onboarding-mark">N</div>
+    <p class="eyebrow">WELCOME TO NOVA</p>
+    <h2>A browser that feels like yours.</h2>
+    <p class="onboarding-copy">Choose a look for your browser. Change it any time from the toolbar.</p>
+    <div class="theme-choices" role="group" aria-label="Choose appearance">
+      <button class="theme-choice selected" type="button" data-theme-choice="dark"><span class="theme-swatch dark-swatch"></span><span>Midnight</span><span class="theme-check">✓</span></button>
+      <button class="theme-choice" type="button" data-theme-choice="light"><span class="theme-swatch light-swatch"></span><span>Daylight</span><span class="theme-check">✓</span></button>
+    </div>
+    <button id="first-run-continue" class="onboarding-continue" type="button">Continue to Nova <span>→</span></button>
+    <button id="first-run-skip" class="onboarding-skip" type="button">Skip for now</button>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="/browser/app.js"></script>
+</body>
+</html>

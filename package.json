@@ -1,0 +1,75 @@
+{
+  "name": "nova-browser",
+  "version": "1.0.4",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test tests/*.test.js",
+    "test:providers": "node tests/provider-test.js",
+    "crawl": "node src/crawl-cli.js",
+    "evaluate": "node src/eval/runner.js",
+    "evaluate:custom": "node src/eval/runner.js",
+    "evaluate:quick": "node src/eval/runner.js benchmark/queries.json 10",
+    "evaluate:coverage": "node src/eval/runner.js benchmark/coverage.json 10",
+    "evaluate:corpus": "node src/eval/corpus-runner.js",
+    "crawl:frontier": "node src/frontier-cli.js",
+    "crawl:recrawl": "node src/recrawl-cli.js",
+    "query:add": "node src/query-cli.js add",
+    "query:expand": "node src/query-cli.js expand",
+    "query:smart": "node src/query-cli.js smart",
+    "query:stats": "node src/query-cli.js stats",
+    "query:list": "node src/query-cli.js list",
+    "query:batch": "node src/query-batch-cli.js",
+    "browser": "electron .",
+    "dist": "electron-builder --win nsis",
+    "test:browser": "node --check main.cjs && node --check preload.cjs && node --check public/app.js"
+  },
+  "productName": "Nova Browser",
+  "main": "main.cjs",
+  "dependencies": {
+    "electron-updater": "^6.6.2"
+  },
+  "devDependencies": {
+    "electron": "^44.5.1",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.nova.browser",
+    "productName": "Nova Browser",
+    "asar": true,
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "src/**/*",
+      "public/**/*",
+      "package.json",
+      "README.md",
+      ".env.example"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false
+    },
+    "publish": {
+      "provider": "generic",
+      "url": "https://YOUR-UPDATE-HOST.example.com/nova/"
+    }
+  }
+}

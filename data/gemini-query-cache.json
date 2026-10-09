@@ -1,0 +1,140 @@
+[
+  {
+    "key": "ff07640c00fb490aa76500493fcff2d43a30561993a15cd65f50810e8fb16bb1",
+    "model": "gemini-3.8-flash|gemini-3.7-flash|gemini-3.6-flash",
+    "value": {
+      "category": "Technology & Computing",
+      "intent": "Informational",
+      "queries": [
+        {
+          "query": "download python latest version",
+          "category": "Technology & Computing",
+          "intent": "Navigational"
+        },
+        {
+          "query": "python programming tutorial for beginners",
+          "category": "Education & Reference",
+          "intent": "Informational"
+        },
+        {
+          "query": "ball python snake care guide",
+          "category": "Pets & Animals",
+          "intent": "Informational"
+        }
+      ]
+    },
+    "createdAt": "2026-10-04T10:12:09.621Z",
+    "lastUsedAt": "2026-10-04T10:12:09.630Z"
+  },
+  {
+    "key": "12c0fc3c504b92c22e60708d0abcbf66495f7fac517b2bef80668ce8195bc4ba",
+    "model": "gemini-3.8-flash|gemini-3.7-flash|gemini-3.6-flash",
+    "value": {
+      "category": "Technology",
+      "intent": "Informational",
+      "queries": [
+        {
+          "query": "python official website download",
+          "category": "Technology",
+          "intent": "Navigational"
+        },
+        {
+          "query": "python tutorial for beginners",
+          "category": "Education",
+          "intent": "Informational"
+        },
+        {
+          "query": "ball python care guide",
+          "category": "Pets & Animals",
+          "intent": "Informational"
+        },
+        {
+          "query": "how to install python packages with pip",
+          "category": "Technology",
+          "intent": "Informational"
+        },
+        {
+          "query": "best online python certification courses",
+          "category": "Education",
+          "intent": "Commercial"
+        }
+      ]
+    },
+    "createdAt": "2026-10-04T10:18:31.228Z",
+    "lastUsedAt": "2026-10-04T10:36:05.791Z"
+  },
+  {
+    "key": "fae7069c3fcda726dba3cefff3e8da1b2b231df9262277a96c1a3cbeaeb97625",
+    "model": "gemini-3.8-flash|gemini-3.7-flash|gemini-3.6-flash",
+    "value": {
+      "category": "Software & Development",
+      "intent": "Navigational",
+      "queries": [
+        {
+          "query": "python.org downloads",
+          "category": "Software & Development",
+          "intent": "Navigational"
+        },
+        {
+          "query": "download python latest version for windows 11",
+          "category": "Software & Development",
+          "intent": "Transactional"
+        },
+        {
+          "query": "official python 3 installer download",
+          "category": "Software & Development",
+          "intent": "Transactional"
+        },
+        {
+          "query": "python download macos official",
+          "category": "Software & Development",
+          "intent": "Transactional"
+        },
+        {
+          "query": "where to download python safely",
+          "category": "Software & Development",
+          "intent": "Informational"
+        }
+      ]
+    },
+    "createdAt": "2026-10-04T10:37:57.085Z",
+    "lastUsedAt": "2026-10-04T10:37:57.086Z"
+  },
+  {
+    "key": "734361a86e7f0dfe105a58e3e5a47fc098ad1c83dc1fe8d8f685f9f262a9534c",
+    "model": "gemini-3.8-flash|gemini-3.7-flash|gemini-3.6-flash",
+    "value": {
+      "category": "Technology",
+      "intent": "Navigational",
+      "queries": [
+        {
+          "query": "python download official site",
+          "category": "Technology",
+          "intent": "Navigational"
+        },
+        {
+          "query": "python tutorial for beginners",
+          "category": "Technology",
+          "intent": "Informational"
+        },
+        {
+          "query": "python official documentation standard library",
+          "category": "Technology",
+          "intent": "Informational"
+        },
+        {
+          "query": "how to install python on windows 11",
+          "category": "Technology",
+          "intent": "Informational"
+        },
+        {
+          "query": "what is python used for in software development",
+          "category": "Technology",
+          "intent": "Informational"
+        }
+      ]
+    },
+    "createdAt": "2026-10-04T11:07:46.776Z",
+    "lastUsedAt": "2026-10-04T11:07:46.805Z"
+  }
+]

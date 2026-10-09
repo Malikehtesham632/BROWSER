@@ -1,0 +1,5511 @@
+{
+  "name": "Omni Engine broad web query coverage benchmark",
+  "version": 1,
+  "description": "A broad, curated offline evaluation suite spanning common search intents and technical/general domains. It is not literally every possible internet query; the web query space is unbounded. Domain judgments are intentionally non-exhaustive and are used for ranking-density evaluation. Add graded relevanceByUrl judgments for rigorous recall/nDCG.",
+  "coverage": {
+    "queries": 410,
+    "categories": 28,
+    "categoriesList": [
+      "programming",
+      "web-development",
+      "backend",
+      "databases",
+      "devops-cloud",
+      "git-collaboration",
+      "ai-ml",
+      "data-science",
+      "security",
+      "networking",
+      "operating-systems",
+      "hardware",
+      "math-science",
+      "productivity",
+      "software-engineering",
+      "search-information",
+      "business-finance",
+      "education",
+      "mobile",
+      "media-design",
+      "current-tech",
+      "general-knowledge",
+      "travel-local",
+      "health-wellness",
+      "environment",
+      "law-civics",
+      "gaming",
+      "automation"
+    ]
+  },
+  "queries": [
+    {
+      "id": "cov-0001",
+      "query": "Python decorators",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0002",
+      "query": "Python virtual environments",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0003",
+      "query": "Python async await",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0004",
+      "query": "Python type hints",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0005",
+      "query": "Python dataclasses",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0006",
+      "query": "Python logging",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0007",
+      "query": "Python unit testing",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0008",
+      "query": "Python packaging",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0009",
+      "query": "Python multiprocessing",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0010",
+      "query": "Python generators",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0011",
+      "query": "JavaScript promises",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0012",
+      "query": "JavaScript closures",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0013",
+      "query": "JavaScript modules",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0014",
+      "query": "JavaScript event loop",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0015",
+      "query": "JavaScript error handling",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0016",
+      "query": "JavaScript arrays",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0017",
+      "query": "JavaScript objects",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0018",
+      "query": "TypeScript generics",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0019",
+      "query": "TypeScript interfaces",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0020",
+      "query": "TypeScript decorators",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0021",
+      "query": "C++ smart pointers",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0022",
+      "query": "C++ templates",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0023",
+      "query": "C++ memory management",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0024",
+      "query": "Java interfaces",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0025",
+      "query": "Java streams",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0026",
+      "query": "C# async programming",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0027",
+      "query": "Go goroutines",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0028",
+      "query": "Rust ownership",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0029",
+      "query": "Rust borrowing",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0030",
+      "query": "PHP sessions",
+      "category": "programming",
+      "intent": "informational",
+      "relevantDomains": [
+        "python.org",
+        "developer.mozilla.org",
+        "typescriptlang.org",
+        "cppreference.com",
+        "go.dev",
+        "rust-lang.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0031",
+      "query": "HTML semantic elements",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0032",
+      "query": "HTML forms validation",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0033",
+      "query": "CSS flexbox tutorial",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0034",
+      "query": "CSS grid tutorial",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0035",
+      "query": "CSS responsive design",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0036",
+      "query": "CSS animations",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0037",
+      "query": "JavaScript DOM manipulation",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0038",
+      "query": "JavaScript fetch API",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0039",
+      "query": "REST API design",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0040",
+      "query": "GraphQL API tutorial",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0041",
+      "query": "Web accessibility WCAG",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0042",
+      "query": "browser local storage",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0043",
+      "query": "HTTP cookies explained",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0044",
+      "query": "HTTP status codes",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0045",
+      "query": "Content Security Policy",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0046",
+      "query": "CORS explained",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0047",
+      "query": "web performance optimization",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0048",
+      "query": "responsive images HTML",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0049",
+      "query": "web components tutorial",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0050",
+      "query": "service workers web",
+      "category": "web-development",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0051",
+      "query": "FastAPI authentication",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0052",
+      "query": "FastAPI dependency injection",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0053",
+      "query": "FastAPI background tasks",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0054",
+      "query": "FastAPI WebSockets",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0055",
+      "query": "Django authentication",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0056",
+      "query": "Django REST framework",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0057",
+      "query": "Flask application factory",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0058",
+      "query": "Node.js Express middleware",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0059",
+      "query": "Node.js streams",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0060",
+      "query": "NestJS dependency injection",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0061",
+      "query": "Spring Boot REST API",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0062",
+      "query": "Laravel routing",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0063",
+      "query": "ASP.NET Core Web API",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0064",
+      "query": "Go HTTP server",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0065",
+      "query": "Rust Axum tutorial",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0066",
+      "query": "API rate limiting",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0067",
+      "query": "JWT authentication",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0068",
+      "query": "OAuth 2.0 explained",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0069",
+      "query": "OpenAPI specification",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0070",
+      "query": "API pagination design",
+      "category": "backend",
+      "intent": "informational",
+      "relevantDomains": [
+        "fastapi.tiangolo.com",
+        "docs.djangoproject.com",
+        "expressjs.com",
+        "spring.io",
+        "learn.microsoft.com",
+        "laravel.com",
+        "go.dev",
+        "docs.rs"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0071",
+      "query": "PostgreSQL indexing",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0072",
+      "query": "PostgreSQL transactions",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0073",
+      "query": "PostgreSQL JSONB",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0074",
+      "query": "PostgreSQL full text search",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0075",
+      "query": "PostgreSQL foreign keys",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0076",
+      "query": "PostgreSQL query optimization",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0077",
+      "query": "MySQL indexes",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0078",
+      "query": "MySQL transactions",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0079",
+      "query": "SQLite WAL mode",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0080",
+      "query": "MongoDB aggregation",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0081",
+      "query": "MongoDB indexes",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0082",
+      "query": "Redis caching",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0083",
+      "query": "Redis data types",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0084",
+      "query": "database normalization",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0085",
+      "query": "database transactions ACID",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0086",
+      "query": "SQL joins tutorial",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0087",
+      "query": "SQL window functions",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0088",
+      "query": "SQL common table expressions",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0089",
+      "query": "database connection pooling",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0090",
+      "query": "database replication",
+      "category": "databases",
+      "intent": "informational",
+      "relevantDomains": [
+        "postgresql.org",
+        "dev.mysql.com",
+        "sqlite.org",
+        "mongodb.com",
+        "redis.io"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0091",
+      "query": "Docker FastAPI deployment",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0092",
+      "query": "Docker volumes",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0093",
+      "query": "Docker networking",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0094",
+      "query": "Docker Compose tutorial",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0095",
+      "query": "Kubernetes deployments",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0096",
+      "query": "Kubernetes services",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0097",
+      "query": "Kubernetes ingress",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0098",
+      "query": "Kubernetes ConfigMap",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0099",
+      "query": "Kubernetes secrets",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0100",
+      "query": "GitHub Actions CI",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0101",
+      "query": "GitHub Actions deployment",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0102",
+      "query": "Terraform AWS tutorial",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0103",
+      "query": "AWS EC2 tutorial",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0104",
+      "query": "AWS S3 permissions",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0105",
+      "query": "AWS Lambda Python",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0106",
+      "query": "AWS RDS PostgreSQL",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0107",
+      "query": "Azure App Service",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0108",
+      "query": "Google Cloud Run",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0109",
+      "query": "Vercel deployment",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0110",
+      "query": "Railway deployment",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.docker.com",
+        "kubernetes.io",
+        "docs.github.com",
+        "developer.hashicorp.com",
+        "docs.aws.amazon.com",
+        "learn.microsoft.com",
+        "cloud.google.com",
+        "vercel.com",
+        "docs.railway.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0111",
+      "query": "Git branching tutorial",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0112",
+      "query": "Git merge conflicts",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0113",
+      "query": "Git rebase tutorial",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0114",
+      "query": "Git stash explained",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0115",
+      "query": "Git reset vs revert",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0116",
+      "query": "Git cherry pick",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0117",
+      "query": "Git tags",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0118",
+      "query": "Git hooks",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0119",
+      "query": "GitHub pull requests",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0120",
+      "query": "GitHub Actions workflows",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0121",
+      "query": "GitHub issues",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0122",
+      "query": "GitHub code review",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0123",
+      "query": "Git remote branches",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0124",
+      "query": "Git clone vs fork",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0125",
+      "query": "Git submodules",
+      "category": "git-collaboration",
+      "intent": "informational",
+      "relevantDomains": [
+        "git-scm.com",
+        "docs.github.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0126",
+      "query": "machine learning classification",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0127",
+      "query": "linear regression explained",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0128",
+      "query": "logistic regression tutorial",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0129",
+      "query": "decision trees machine learning",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0130",
+      "query": "random forest explained",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0131",
+      "query": "gradient descent",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0132",
+      "query": "neural networks tutorial",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0133",
+      "query": "convolutional neural networks",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0134",
+      "query": "transformer architecture",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0135",
+      "query": "attention mechanism",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0136",
+      "query": "large language models",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0137",
+      "query": "retrieval augmented generation",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0138",
+      "query": "vector embeddings",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0139",
+      "query": "semantic search",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0140",
+      "query": "fine tuning language models",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0141",
+      "query": "PyTorch tensors",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0142",
+      "query": "TensorFlow datasets",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0143",
+      "query": "scikit learn pipelines",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0144",
+      "query": "machine learning model evaluation",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0145",
+      "query": "AI inference optimization",
+      "category": "ai-ml",
+      "intent": "informational",
+      "relevantDomains": [
+        "pytorch.org",
+        "tensorflow.org",
+        "scikit-learn.org",
+        "huggingface.co"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0146",
+      "query": "Pandas groupby tutorial",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0147",
+      "query": "Pandas merge dataframes",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0148",
+      "query": "NumPy broadcasting",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0149",
+      "query": "NumPy arrays",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0150",
+      "query": "Matplotlib line plot",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0151",
+      "query": "data cleaning techniques",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0152",
+      "query": "exploratory data analysis",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0153",
+      "query": "feature engineering",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0154",
+      "query": "data visualization best practices",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0155",
+      "query": "statistics mean median mode",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0156",
+      "query": "standard deviation explained",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0157",
+      "query": "probability distributions",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0158",
+      "query": "hypothesis testing",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0159",
+      "query": "correlation vs causation",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0160",
+      "query": "linear algebra for machine learning",
+      "category": "data-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "pandas.pydata.org",
+        "numpy.org",
+        "matplotlib.org",
+        "scikit-learn.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0161",
+      "query": "OWASP Top 10",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0162",
+      "query": "SQL injection prevention",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0163",
+      "query": "XSS prevention",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0164",
+      "query": "CSRF protection",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0165",
+      "query": "password hashing",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0166",
+      "query": "secure session management",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0167",
+      "query": "TLS HTTPS explained",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0168",
+      "query": "public key cryptography",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0169",
+      "query": "symmetric encryption",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0170",
+      "query": "security headers web",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0171",
+      "query": "CORS security",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0172",
+      "query": "API authentication security",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0173",
+      "query": "OAuth security best practices",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0174",
+      "query": "dependency vulnerability scanning",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0175",
+      "query": "container security",
+      "category": "security",
+      "intent": "informational",
+      "relevantDomains": [
+        "owasp.org",
+        "developer.mozilla.org",
+        "csrc.nist.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0176",
+      "query": "TCP vs UDP",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0177",
+      "query": "DNS explained",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0178",
+      "query": "HTTP HTTP2 HTTP3",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0179",
+      "query": "IPv4 subnetting",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0180",
+      "query": "IPv6 tutorial",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0181",
+      "query": "NAT explained",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0182",
+      "query": "reverse proxy",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0183",
+      "query": "load balancing",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0184",
+      "query": "WebSocket protocol",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0185",
+      "query": "TLS handshake",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0186",
+      "query": "ARP explained",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0187",
+      "query": "DHCP explained",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0188",
+      "query": "network latency",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0189",
+      "query": "CDN explained",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0190",
+      "query": "VPN how it works",
+      "category": "networking",
+      "intent": "informational",
+      "relevantDomains": [
+        "cloudflare.com",
+        "developer.mozilla.org",
+        "cisco.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0191",
+      "query": "Linux file permissions",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0192",
+      "query": "Linux processes",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0193",
+      "query": "Linux systemd",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0194",
+      "query": "Linux shell scripting",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0195",
+      "query": "Windows services",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0196",
+      "query": "Windows environment variables",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0197",
+      "query": "virtual memory",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0198",
+      "query": "process scheduling",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0199",
+      "query": "threads vs processes",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0200",
+      "query": "file systems explained",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0201",
+      "query": "memory management operating systems",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0202",
+      "query": "Linux networking commands",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0203",
+      "query": "SSH tutorial",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0204",
+      "query": "WSL tutorial",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0205",
+      "query": "container isolation",
+      "category": "operating-systems",
+      "intent": "informational",
+      "relevantDomains": [
+        "kernel.org",
+        "learn.microsoft.com",
+        "ubuntu.com",
+        "docs.python.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0206",
+      "query": "CPU cache explained",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0207",
+      "query": "RAM types",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0208",
+      "query": "SSD vs HDD",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0209",
+      "query": "NVMe explained",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0210",
+      "query": "PCIe generations",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0211",
+      "query": "USB standards",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0212",
+      "query": "GPU architecture",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0213",
+      "query": "integrated vs dedicated graphics",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0214",
+      "query": "laptop battery health",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0215",
+      "query": "computer virtualization",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0216",
+      "query": "motherboard chipsets",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0217",
+      "query": "display refresh rate",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0218",
+      "query": "Wi-Fi standards",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0219",
+      "query": "Bluetooth versions",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0220",
+      "query": "computer power supply",
+      "category": "hardware",
+      "intent": "informational",
+      "relevantDomains": [
+        "intel.com",
+        "amd.com",
+        "nvidia.com",
+        "microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0221",
+      "query": "quadratic equations",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0222",
+      "query": "linear algebra basics",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0223",
+      "query": "calculus derivatives",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0224",
+      "query": "calculus integrals",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0225",
+      "query": "matrix multiplication",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0226",
+      "query": "probability basics",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0227",
+      "query": "Newton laws of motion",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0228",
+      "query": "electromagnetic induction",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0229",
+      "query": "thermodynamics laws",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0230",
+      "query": "chemical bonding",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0231",
+      "query": "periodic table trends",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0232",
+      "query": "photosynthesis process",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0233",
+      "query": "DNA replication",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0234",
+      "query": "cell division",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0235",
+      "query": "scientific method",
+      "category": "math-science",
+      "intent": "informational",
+      "relevantDomains": [
+        "wikipedia.org",
+        "openstax.org",
+        "khanacademy.org",
+        "nasa.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0236",
+      "query": "Markdown syntax",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0237",
+      "query": "LaTeX equations",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0238",
+      "query": "CSV file format",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0239",
+      "query": "JSON format",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0240",
+      "query": "YAML syntax",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0241",
+      "query": "regular expressions tutorial",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0242",
+      "query": "keyboard shortcuts Windows",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0243",
+      "query": "VS Code shortcuts",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0244",
+      "query": "terminal commands Linux",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0245",
+      "query": "PowerShell commands",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0246",
+      "query": "PDF metadata",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0247",
+      "query": "file compression formats",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0248",
+      "query": "calendar scheduling concepts",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0249",
+      "query": "password manager security",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0250",
+      "query": "backup strategy",
+      "category": "productivity",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.github.com",
+        "code.visualstudio.com",
+        "learn.microsoft.com",
+        "developer.mozilla.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0251",
+      "query": "software architecture patterns",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0252",
+      "query": "SOLID principles",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0253",
+      "query": "clean code principles",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0254",
+      "query": "unit testing vs integration testing",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0255",
+      "query": "test driven development",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0256",
+      "query": "continuous integration",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0257",
+      "query": "semantic versioning",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0258",
+      "query": "dependency management",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0259",
+      "query": "logging best practices",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0260",
+      "query": "observability explained",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0261",
+      "query": "distributed systems basics",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0262",
+      "query": "message queues",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0263",
+      "query": "event driven architecture",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0264",
+      "query": "microservices vs monolith",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0265",
+      "query": "software design documentation",
+      "category": "software-engineering",
+      "intent": "informational",
+      "relevantDomains": [
+        "martinfowler.com",
+        "docs.github.com",
+        "semver.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0266",
+      "query": "how search engines work",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0267",
+      "query": "inverted index explained",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0268",
+      "query": "BM25 ranking",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0269",
+      "query": "PageRank algorithm",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0270",
+      "query": "information retrieval precision recall",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0271",
+      "query": "nDCG metric",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0272",
+      "query": "semantic search",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0273",
+      "query": "vector database search",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0274",
+      "query": "web crawler architecture",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0275",
+      "query": "robots.txt explained",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0276",
+      "query": "canonical URLs",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0277",
+      "query": "duplicate content detection",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0278",
+      "query": "search query parsing",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0279",
+      "query": "spell correction search",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0280",
+      "query": "autocomplete search",
+      "category": "search-information",
+      "intent": "informational",
+      "relevantDomains": [
+        "developers.google.com",
+        "elastic.co",
+        "opensearch.org",
+        "docs.searxng.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0281",
+      "query": "how invoices work",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0282",
+      "query": "small business accounting basics",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0283",
+      "query": "cash flow explained",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0284",
+      "query": "profit margin calculation",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0285",
+      "query": "business budgeting",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0286",
+      "query": "project management basics",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0287",
+      "query": "product roadmap",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0288",
+      "query": "customer relationship management",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0289",
+      "query": "software licensing models",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0290",
+      "query": "open source licenses",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0291",
+      "query": "freelance web development proposal",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0292",
+      "query": "technical project estimation",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0293",
+      "query": "software maintenance planning",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0294",
+      "query": "SaaS architecture",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0295",
+      "query": "subscription billing concepts",
+      "category": "business-finance",
+      "intent": "informational",
+      "relevantDomains": [
+        "sba.gov",
+        "investopedia.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0296",
+      "query": "how to learn programming",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0297",
+      "query": "computer science fundamentals",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0298",
+      "query": "data structures tutorial",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0299",
+      "query": "algorithms tutorial",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0300",
+      "query": "binary search explained",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0301",
+      "query": "sorting algorithms",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0302",
+      "query": "hash tables explained",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0303",
+      "query": "linked lists",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0304",
+      "query": "trees data structure",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0305",
+      "query": "graphs data structure",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0306",
+      "query": "recursion explained",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0307",
+      "query": "dynamic programming basics",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0308",
+      "query": "object oriented programming",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0309",
+      "query": "functional programming",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0310",
+      "query": "computer networking basics",
+      "category": "education",
+      "intent": "informational",
+      "relevantDomains": [
+        "cs50.harvard.edu",
+        "ocw.mit.edu",
+        "khanacademy.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0311",
+      "query": "Android app architecture",
+      "category": "mobile",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.android.com",
+        "developer.apple.com",
+        "docs.flutter.dev",
+        "reactnative.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0312",
+      "query": "Android permissions",
+      "category": "mobile",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.android.com",
+        "developer.apple.com",
+        "docs.flutter.dev",
+        "reactnative.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0313",
+      "query": "iOS app lifecycle",
+      "category": "mobile",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.android.com",
+        "developer.apple.com",
+        "docs.flutter.dev",
+        "reactnative.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0314",
+      "query": "Flutter widgets",
+      "category": "mobile",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.android.com",
+        "developer.apple.com",
+        "docs.flutter.dev",
+        "reactnative.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0315",
+      "query": "React Native navigation",
+      "category": "mobile",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.android.com",
+        "developer.apple.com",
+        "docs.flutter.dev",
+        "reactnative.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0316",
+      "query": "mobile responsive design",
+      "category": "mobile",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.android.com",
+        "developer.apple.com",
+        "docs.flutter.dev",
+        "reactnative.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0317",
+      "query": "mobile app deep links",
+      "category": "mobile",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.android.com",
+        "developer.apple.com",
+        "docs.flutter.dev",
+        "reactnative.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0318",
+      "query": "push notifications architecture",
+      "category": "mobile",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.android.com",
+        "developer.apple.com",
+        "docs.flutter.dev",
+        "reactnative.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0319",
+      "query": "mobile app caching",
+      "category": "mobile",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.android.com",
+        "developer.apple.com",
+        "docs.flutter.dev",
+        "reactnative.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0320",
+      "query": "mobile app security",
+      "category": "mobile",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.android.com",
+        "developer.apple.com",
+        "docs.flutter.dev",
+        "reactnative.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0321",
+      "query": "SVG tutorial",
+      "category": "media-design",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "figma.com",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0322",
+      "query": "CSS typography",
+      "category": "media-design",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "figma.com",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0323",
+      "query": "web color accessibility",
+      "category": "media-design",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "figma.com",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0324",
+      "query": "UI design principles",
+      "category": "media-design",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "figma.com",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0325",
+      "query": "UX research basics",
+      "category": "media-design",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "figma.com",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0326",
+      "query": "Figma components",
+      "category": "media-design",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "figma.com",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0327",
+      "query": "Figma auto layout",
+      "category": "media-design",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "figma.com",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0328",
+      "query": "image compression web",
+      "category": "media-design",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "figma.com",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0329",
+      "query": "WebP vs PNG",
+      "category": "media-design",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "figma.com",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0330",
+      "query": "video codecs explained",
+      "category": "media-design",
+      "intent": "informational",
+      "relevantDomains": [
+        "developer.mozilla.org",
+        "w3.org",
+        "figma.com",
+        "web.dev"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0331",
+      "query": "latest Python release",
+      "category": "current-tech",
+      "intent": "general",
+      "relevantDomains": [
+        "python.org",
+        "nodejs.org",
+        "postgresql.org",
+        "docker.com",
+        "kubernetes.io",
+        "react.dev",
+        "typescriptlang.org",
+        "ubuntu.com",
+        "developer.android.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0332",
+      "query": "latest JavaScript features",
+      "category": "current-tech",
+      "intent": "general",
+      "relevantDomains": [
+        "python.org",
+        "nodejs.org",
+        "postgresql.org",
+        "docker.com",
+        "kubernetes.io",
+        "react.dev",
+        "typescriptlang.org",
+        "ubuntu.com",
+        "developer.android.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0333",
+      "query": "latest Node.js release",
+      "category": "current-tech",
+      "intent": "general",
+      "relevantDomains": [
+        "python.org",
+        "nodejs.org",
+        "postgresql.org",
+        "docker.com",
+        "kubernetes.io",
+        "react.dev",
+        "typescriptlang.org",
+        "ubuntu.com",
+        "developer.android.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0334",
+      "query": "latest PostgreSQL release",
+      "category": "current-tech",
+      "intent": "general",
+      "relevantDomains": [
+        "python.org",
+        "nodejs.org",
+        "postgresql.org",
+        "docker.com",
+        "kubernetes.io",
+        "react.dev",
+        "typescriptlang.org",
+        "ubuntu.com",
+        "developer.android.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0335",
+      "query": "latest Docker release",
+      "category": "current-tech",
+      "intent": "general",
+      "relevantDomains": [
+        "python.org",
+        "nodejs.org",
+        "postgresql.org",
+        "docker.com",
+        "kubernetes.io",
+        "react.dev",
+        "typescriptlang.org",
+        "ubuntu.com",
+        "developer.android.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0336",
+      "query": "latest Kubernetes features",
+      "category": "current-tech",
+      "intent": "general",
+      "relevantDomains": [
+        "python.org",
+        "nodejs.org",
+        "postgresql.org",
+        "docker.com",
+        "kubernetes.io",
+        "react.dev",
+        "typescriptlang.org",
+        "ubuntu.com",
+        "developer.android.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0337",
+      "query": "latest React release",
+      "category": "current-tech",
+      "intent": "general",
+      "relevantDomains": [
+        "python.org",
+        "nodejs.org",
+        "postgresql.org",
+        "docker.com",
+        "kubernetes.io",
+        "react.dev",
+        "typescriptlang.org",
+        "ubuntu.com",
+        "developer.android.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0338",
+      "query": "latest TypeScript release",
+      "category": "current-tech",
+      "intent": "general",
+      "relevantDomains": [
+        "python.org",
+        "nodejs.org",
+        "postgresql.org",
+        "docker.com",
+        "kubernetes.io",
+        "react.dev",
+        "typescriptlang.org",
+        "ubuntu.com",
+        "developer.android.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0339",
+      "query": "latest Ubuntu release",
+      "category": "current-tech",
+      "intent": "general",
+      "relevantDomains": [
+        "python.org",
+        "nodejs.org",
+        "postgresql.org",
+        "docker.com",
+        "kubernetes.io",
+        "react.dev",
+        "typescriptlang.org",
+        "ubuntu.com",
+        "developer.android.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0340",
+      "query": "latest Android version",
+      "category": "current-tech",
+      "intent": "general",
+      "relevantDomains": [
+        "python.org",
+        "nodejs.org",
+        "postgresql.org",
+        "docker.com",
+        "kubernetes.io",
+        "react.dev",
+        "typescriptlang.org",
+        "ubuntu.com",
+        "developer.android.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0341",
+      "query": "how does photosynthesis work",
+      "category": "general-knowledge",
+      "intent": "informational",
+      "relevantDomains": [
+        "nasa.gov",
+        "noaa.gov",
+        "openstax.org",
+        "wikipedia.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0342",
+      "query": "how does GPS work",
+      "category": "general-knowledge",
+      "intent": "informational",
+      "relevantDomains": [
+        "nasa.gov",
+        "noaa.gov",
+        "openstax.org",
+        "wikipedia.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0343",
+      "query": "how does Wi-Fi work",
+      "category": "general-knowledge",
+      "intent": "informational",
+      "relevantDomains": [
+        "nasa.gov",
+        "noaa.gov",
+        "openstax.org",
+        "wikipedia.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0344",
+      "query": "how does Bluetooth work",
+      "category": "general-knowledge",
+      "intent": "informational",
+      "relevantDomains": [
+        "nasa.gov",
+        "noaa.gov",
+        "openstax.org",
+        "wikipedia.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0345",
+      "query": "how do satellites communicate",
+      "category": "general-knowledge",
+      "intent": "informational",
+      "relevantDomains": [
+        "nasa.gov",
+        "noaa.gov",
+        "openstax.org",
+        "wikipedia.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0346",
+      "query": "how does cloud computing work",
+      "category": "general-knowledge",
+      "intent": "informational",
+      "relevantDomains": [
+        "nasa.gov",
+        "noaa.gov",
+        "openstax.org",
+        "wikipedia.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0347",
+      "query": "how does a compiler work",
+      "category": "general-knowledge",
+      "intent": "informational",
+      "relevantDomains": [
+        "nasa.gov",
+        "noaa.gov",
+        "openstax.org",
+        "wikipedia.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0348",
+      "query": "how does an operating system work",
+      "category": "general-knowledge",
+      "intent": "informational",
+      "relevantDomains": [
+        "nasa.gov",
+        "noaa.gov",
+        "openstax.org",
+        "wikipedia.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0349",
+      "query": "how does a database work",
+      "category": "general-knowledge",
+      "intent": "informational",
+      "relevantDomains": [
+        "nasa.gov",
+        "noaa.gov",
+        "openstax.org",
+        "wikipedia.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0350",
+      "query": "how does encryption work",
+      "category": "general-knowledge",
+      "intent": "informational",
+      "relevantDomains": [
+        "nasa.gov",
+        "noaa.gov",
+        "openstax.org",
+        "wikipedia.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0351",
+      "query": "how to plan a trip",
+      "category": "travel-local",
+      "intent": "general",
+      "relevantDomains": [
+        "iata.org",
+        "icao.int",
+        "travel.state.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0352",
+      "query": "airport security process",
+      "category": "travel-local",
+      "intent": "general",
+      "relevantDomains": [
+        "iata.org",
+        "icao.int",
+        "travel.state.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0353",
+      "query": "international time zones explained",
+      "category": "travel-local",
+      "intent": "general",
+      "relevantDomains": [
+        "iata.org",
+        "icao.int",
+        "travel.state.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0354",
+      "query": "currency exchange basics",
+      "category": "travel-local",
+      "intent": "general",
+      "relevantDomains": [
+        "iata.org",
+        "icao.int",
+        "travel.state.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0355",
+      "query": "travel packing checklist",
+      "category": "travel-local",
+      "intent": "general",
+      "relevantDomains": [
+        "iata.org",
+        "icao.int",
+        "travel.state.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0356",
+      "query": "public transportation maps",
+      "category": "travel-local",
+      "intent": "general",
+      "relevantDomains": [
+        "iata.org",
+        "icao.int",
+        "travel.state.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0357",
+      "query": "hotel booking basics",
+      "category": "travel-local",
+      "intent": "general",
+      "relevantDomains": [
+        "iata.org",
+        "icao.int",
+        "travel.state.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0358",
+      "query": "flight baggage rules",
+      "category": "travel-local",
+      "intent": "general",
+      "relevantDomains": [
+        "iata.org",
+        "icao.int",
+        "travel.state.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0359",
+      "query": "travel insurance explained",
+      "category": "travel-local",
+      "intent": "general",
+      "relevantDomains": [
+        "iata.org",
+        "icao.int",
+        "travel.state.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0360",
+      "query": "passport validity rules",
+      "category": "travel-local",
+      "intent": "general",
+      "relevantDomains": [
+        "iata.org",
+        "icao.int",
+        "travel.state.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0361",
+      "query": "how sleep cycles work",
+      "category": "health-wellness",
+      "intent": "informational",
+      "relevantDomains": [
+        "who.int",
+        "cdc.gov",
+        "nih.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0362",
+      "query": "balanced nutrition basics",
+      "category": "health-wellness",
+      "intent": "informational",
+      "relevantDomains": [
+        "who.int",
+        "cdc.gov",
+        "nih.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0363",
+      "query": "benefits of regular physical activity",
+      "category": "health-wellness",
+      "intent": "informational",
+      "relevantDomains": [
+        "who.int",
+        "cdc.gov",
+        "nih.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0364",
+      "query": "how hydration works",
+      "category": "health-wellness",
+      "intent": "informational",
+      "relevantDomains": [
+        "who.int",
+        "cdc.gov",
+        "nih.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0365",
+      "query": "basic first aid principles",
+      "category": "health-wellness",
+      "intent": "informational",
+      "relevantDomains": [
+        "who.int",
+        "cdc.gov",
+        "nih.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0366",
+      "query": "how vaccines work",
+      "category": "health-wellness",
+      "intent": "informational",
+      "relevantDomains": [
+        "who.int",
+        "cdc.gov",
+        "nih.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0367",
+      "query": "understanding body temperature",
+      "category": "health-wellness",
+      "intent": "informational",
+      "relevantDomains": [
+        "who.int",
+        "cdc.gov",
+        "nih.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0368",
+      "query": "how the immune system works",
+      "category": "health-wellness",
+      "intent": "informational",
+      "relevantDomains": [
+        "who.int",
+        "cdc.gov",
+        "nih.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0369",
+      "query": "healthy study breaks",
+      "category": "health-wellness",
+      "intent": "informational",
+      "relevantDomains": [
+        "who.int",
+        "cdc.gov",
+        "nih.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0370",
+      "query": "screen time and sleep",
+      "category": "health-wellness",
+      "intent": "informational",
+      "relevantDomains": [
+        "who.int",
+        "cdc.gov",
+        "nih.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0371",
+      "query": "renewable energy explained",
+      "category": "environment",
+      "intent": "informational",
+      "relevantDomains": [
+        "epa.gov",
+        "energy.gov",
+        "nasa.gov",
+        "un.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0372",
+      "query": "solar power basics",
+      "category": "environment",
+      "intent": "informational",
+      "relevantDomains": [
+        "epa.gov",
+        "energy.gov",
+        "nasa.gov",
+        "un.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0373",
+      "query": "wind power generation",
+      "category": "environment",
+      "intent": "informational",
+      "relevantDomains": [
+        "epa.gov",
+        "energy.gov",
+        "nasa.gov",
+        "un.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0374",
+      "query": "electric vehicle charging",
+      "category": "environment",
+      "intent": "informational",
+      "relevantDomains": [
+        "epa.gov",
+        "energy.gov",
+        "nasa.gov",
+        "un.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0375",
+      "query": "battery recycling",
+      "category": "environment",
+      "intent": "informational",
+      "relevantDomains": [
+        "epa.gov",
+        "energy.gov",
+        "nasa.gov",
+        "un.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0376",
+      "query": "water cycle",
+      "category": "environment",
+      "intent": "informational",
+      "relevantDomains": [
+        "epa.gov",
+        "energy.gov",
+        "nasa.gov",
+        "un.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0377",
+      "query": "climate change basics",
+      "category": "environment",
+      "intent": "informational",
+      "relevantDomains": [
+        "epa.gov",
+        "energy.gov",
+        "nasa.gov",
+        "un.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0378",
+      "query": "air pollution causes",
+      "category": "environment",
+      "intent": "informational",
+      "relevantDomains": [
+        "epa.gov",
+        "energy.gov",
+        "nasa.gov",
+        "un.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0379",
+      "query": "plastic recycling",
+      "category": "environment",
+      "intent": "informational",
+      "relevantDomains": [
+        "epa.gov",
+        "energy.gov",
+        "nasa.gov",
+        "un.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0380",
+      "query": "energy efficiency at home",
+      "category": "environment",
+      "intent": "informational",
+      "relevantDomains": [
+        "epa.gov",
+        "energy.gov",
+        "nasa.gov",
+        "un.org"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0381",
+      "query": "how laws are passed",
+      "category": "law-civics",
+      "intent": "informational",
+      "relevantDomains": [
+        "congress.gov",
+        "supremecourt.gov",
+        "usa.gov",
+        "copyright.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0382",
+      "query": "what is a constitution",
+      "category": "law-civics",
+      "intent": "informational",
+      "relevantDomains": [
+        "congress.gov",
+        "supremecourt.gov",
+        "usa.gov",
+        "copyright.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0383",
+      "query": "how courts work",
+      "category": "law-civics",
+      "intent": "informational",
+      "relevantDomains": [
+        "congress.gov",
+        "supremecourt.gov",
+        "usa.gov",
+        "copyright.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0384",
+      "query": "consumer rights basics",
+      "category": "law-civics",
+      "intent": "informational",
+      "relevantDomains": [
+        "congress.gov",
+        "supremecourt.gov",
+        "usa.gov",
+        "copyright.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0385",
+      "query": "digital privacy principles",
+      "category": "law-civics",
+      "intent": "informational",
+      "relevantDomains": [
+        "congress.gov",
+        "supremecourt.gov",
+        "usa.gov",
+        "copyright.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0386",
+      "query": "intellectual property basics",
+      "category": "law-civics",
+      "intent": "informational",
+      "relevantDomains": [
+        "congress.gov",
+        "supremecourt.gov",
+        "usa.gov",
+        "copyright.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0387",
+      "query": "copyright explained",
+      "category": "law-civics",
+      "intent": "informational",
+      "relevantDomains": [
+        "congress.gov",
+        "supremecourt.gov",
+        "usa.gov",
+        "copyright.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0388",
+      "query": "software patents basics",
+      "category": "law-civics",
+      "intent": "informational",
+      "relevantDomains": [
+        "congress.gov",
+        "supremecourt.gov",
+        "usa.gov",
+        "copyright.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0389",
+      "query": "data protection concepts",
+      "category": "law-civics",
+      "intent": "informational",
+      "relevantDomains": [
+        "congress.gov",
+        "supremecourt.gov",
+        "usa.gov",
+        "copyright.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0390",
+      "query": "freedom of information basics",
+      "category": "law-civics",
+      "intent": "informational",
+      "relevantDomains": [
+        "congress.gov",
+        "supremecourt.gov",
+        "usa.gov",
+        "copyright.gov"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0391",
+      "query": "game engine architecture",
+      "category": "gaming",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.unity3d.com",
+        "dev.epicgames.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0392",
+      "query": "2D game physics",
+      "category": "gaming",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.unity3d.com",
+        "dev.epicgames.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0393",
+      "query": "3D game physics",
+      "category": "gaming",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.unity3d.com",
+        "dev.epicgames.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0394",
+      "query": "controller input programming",
+      "category": "gaming",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.unity3d.com",
+        "dev.epicgames.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0395",
+      "query": "game loop explained",
+      "category": "gaming",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.unity3d.com",
+        "dev.epicgames.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0396",
+      "query": "collision detection",
+      "category": "gaming",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.unity3d.com",
+        "dev.epicgames.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0397",
+      "query": "game asset optimization",
+      "category": "gaming",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.unity3d.com",
+        "dev.epicgames.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0398",
+      "query": "shader basics",
+      "category": "gaming",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.unity3d.com",
+        "dev.epicgames.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0399",
+      "query": "game networking",
+      "category": "gaming",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.unity3d.com",
+        "dev.epicgames.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0400",
+      "query": "save game systems",
+      "category": "gaming",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.unity3d.com",
+        "dev.epicgames.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0401",
+      "query": "Python web scraping basics",
+      "category": "automation",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.python.org",
+        "playwright.dev",
+        "docs.github.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0402",
+      "query": "browser automation concepts",
+      "category": "automation",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.python.org",
+        "playwright.dev",
+        "docs.github.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0403",
+      "query": "scheduled tasks Python",
+      "category": "automation",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.python.org",
+        "playwright.dev",
+        "docs.github.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0404",
+      "query": "cron jobs explained",
+      "category": "automation",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.python.org",
+        "playwright.dev",
+        "docs.github.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0405",
+      "query": "PowerShell automation",
+      "category": "automation",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.python.org",
+        "playwright.dev",
+        "docs.github.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0406",
+      "query": "GitHub Actions automation",
+      "category": "automation",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.python.org",
+        "playwright.dev",
+        "docs.github.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0407",
+      "query": "API automation testing",
+      "category": "automation",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.python.org",
+        "playwright.dev",
+        "docs.github.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0408",
+      "query": "file processing automation",
+      "category": "automation",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.python.org",
+        "playwright.dev",
+        "docs.github.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0409",
+      "query": "email automation architecture",
+      "category": "automation",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.python.org",
+        "playwright.dev",
+        "docs.github.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    },
+    {
+      "id": "cov-0410",
+      "query": "workflow automation design",
+      "category": "automation",
+      "intent": "informational",
+      "relevantDomains": [
+        "docs.python.org",
+        "playwright.dev",
+        "docs.github.com",
+        "learn.microsoft.com"
+      ],
+      "relevantUrls": []
+    }
+  ]
+}

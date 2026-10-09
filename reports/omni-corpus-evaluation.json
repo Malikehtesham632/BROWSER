@@ -1,0 +1,90 @@
+{
+  "corpus": {
+    "file": "C:\\Users\\ehtes\\Downloads\\BROWSER\\Omni-Engine-Provider-Layer-v2\\Omni-Engine-Provider-Layer-v1\\data\\query-corpus.json",
+    "totalAvailable": 2,
+    "selected": 2
+  },
+  "summary": {
+    "queries": 2,
+    "failed": 0,
+    "noResultRate": 0,
+    "averageLatencyMs": 3413.5,
+    "duplicateRate": 0,
+    "judgedQueries": 0,
+    "judgedMetrics": null
+  },
+  "categorySummary": {
+    "uncategorized": {
+      "queries": 2,
+      "noResultRate": 0,
+      "averageLatencyMs": 3413.5,
+      "duplicateRate": 0,
+      "judgedQueries": 0,
+      "precisionAtK": null,
+      "mrr": null,
+      "ndcg": null
+    }
+  },
+  "weakCategories": [
+    {
+      "category": "uncategorized",
+      "noResultRate": 0,
+      "averageLatencyMs": 3413.5,
+      "duplicateRate": 0,
+      "precisionAtK": null,
+      "ndcg": null
+    }
+  ],
+  "queries": [
+    {
+      "id": "d75b67fe743c5843",
+      "query": "how to authenticate a FastAPI API with OAuth",
+      "category": "uncategorized",
+      "intent": "informational",
+      "latencyMs": 3347,
+      "health": {
+        "resultCount": 10,
+        "uniqueResults": 10,
+        "duplicateRate": 0,
+        "distinctHosts": 6,
+        "hasResults": true,
+        "topUrl": "https://www.facebook.com/groups/387281181699894/posts/2562400230854634/",
+        "queryLength": 44
+      },
+      "judged": null
+    },
+    {
+      "id": "1b19c9956f1126e6",
+      "query": "FastAPI authentication",
+      "category": "uncategorized",
+      "intent": "informational",
+      "latencyMs": 3480,
+      "health": {
+        "resultCount": 10,
+        "uniqueResults": 10,
+        "duplicateRate": 0,
+        "distinctHosts": 5,
+        "hasResults": true,
+        "topUrl": "https://www.geeksforgeeks.org/python/authentication-and-authorization-with-fastapi/",
+        "queryLength": 22
+      },
+      "judged": null
+    }
+  ],
+  "generatedAt": "2026-09-30T11:14:54.149Z",
+  "engine": {
+    "providers": [
+      "serper",
+      "serpapi",
+      "exa",
+      "searxng"
+    ],
+    "index": {
+      "documents": 12,
+      "terms": 1287,
+      "words": 18632,
+      "links": 424,
+      "versionedDocuments": 0
+    }
+  }
+}

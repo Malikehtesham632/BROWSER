@@ -1,0 +1,82 @@
+{
+  "name": "Omni Engine judged relevance benchmark (starter)",
+  "version": 1,
+  "description": "Result-level judgments. Each URL has a grade from 0 to 3 (3 = best answer). Unlike benchmark/queries.json, this does not reward a whole domain, so it is not affected by the authority boost. These are starter judgments: open each URL, confirm it is still correct, and add more.",
+  "queries": [
+    {
+      "id": "j01",
+      "query": "Python FastAPI authentication",
+      "category": "backend",
+      "intent": "informational",
+      "relevanceByUrl": {
+        "https://fastapi.tiangolo.com/tutorial/security/": 3,
+        "https://fastapi.tiangolo.com/tutorial/security/first-steps/": 3,
+        "https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/": 3
+      }
+    },
+    {
+      "id": "j02",
+      "query": "Docker FastAPI deployment",
+      "category": "devops-cloud",
+      "intent": "informational",
+      "relevanceByUrl": {
+        "https://fastapi.tiangolo.com/deployment/docker/": 3
+      }
+    },
+    {
+      "id": "j03",
+      "query": "Python asyncio tutorial",
+      "category": "programming",
+      "intent": "informational",
+      "relevanceByUrl": {
+        "https://docs.python.org/3/library/asyncio.html": 3,
+        "https://docs.python.org/3/library/asyncio-task.html": 2,
+        "https://docs.python.org/3/library/asyncio-eventloop.html": 1
+      }
+    },
+    {
+      "id": "j04",
+      "query": "PostgreSQL indexing",
+      "category": "databases",
+      "intent": "informational",
+      "relevanceByUrl": {
+        "https://www.postgresql.org/docs/current/indexes.html": 3,
+        "https://www.postgresql.org/docs/current/indexes-types.html": 2,
+        "https://www.postgresql.org/docs/current/sql-createindex.html": 1
+      }
+    },
+    {
+      "id": "j05",
+      "query": "Git branching tutorial",
+      "category": "programming",
+      "intent": "informational",
+      "relevanceByUrl": {
+        "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell": 3,
+        "https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging": 3,
+        "https://git-scm.com/docs/git-branch": 1
+      }
+    },
+    {
+      "id": "j06",
+      "query": "JavaScript fetch API",
+      "category": "web-development",
+      "intent": "informational",
+      "relevanceByUrl": {
+        "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API": 3,
+        "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch": 3,
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch": 2
+      }
+    },
+    {
+      "id": "j07",
+      "query": "CSS grid layout",
+      "category": "frontend",
+      "intent": "informational",
+      "relevanceByUrl": {
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout": 3,
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Basic_concepts_of_grid_layout": 3,
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/grid": 1
+      }
+    }
+  ]
+}
