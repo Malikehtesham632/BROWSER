@@ -1,45 +1,15 @@
-function matchesRule(pathname, rule) {
-  if (!rule) return false;
-  const anchored = rule.endsWith('$');
-  const body = anchored ? rule.slice(0, -1) : rule;
-  const escaped = body.split('*').map(s => s.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('.*');
-  return new RegExp('^' + escaped + (anchored ? '$' : '')).test(pathname);
+function ruleMatches(target,rule){if(!rule)return false;const anchored=rule.endsWith('$');const body=anchored?rule.slice(0,-1):rule;const escaped=body.split('*').map(s=>s.replace(/[.+?^${}()|[\]\\]/g,'\\$&')).join('.*');return new RegExp('^'+escaped+(anchored?'$':'' )).test(target)}
+
+export function parseRobots(text){const groups=[];let group=null;for(const raw of String(text??'').replace(/^\uFEFF/,'').split(/\r?\n/)){const line=raw.split('#')[0].trim();if(!line){group=null;continue}const i=line.indexOf(':');if(i<0)continue;const key=line.slice(0,i).trim().toLowerCase(),value=line.slice(i+1).trim();if(key==='user-agent'){if(!group||group.hasRules){group={agents:[],rules:[],crawlDelayMs:0,hasRules:false};groups.push(group)}group.agents.push(value.toLowerCase());continue}if(!group)continue;if(key==='disallow'){if(value)group.rules.push({type:'disallow',value});group.hasRules=true}else if(key==='allow'){if(value)group.rules.push({type:'allow',value});group.hasRules=true}else if(key==='crawl-delay'){const n=Number(value);group.crawlDelayMs=Number.isFinite(n)&&n>=0?Math.min(30000,n*1000):0}}return groups}
+
+export function selectRules(groups,userAgent='*'){const ua=String(userAgent).toLowerCase();const token=ua.split(/[\s/]/)[0];const exact=groups.filter(g=>g.agents.some(a=>a===ua||a===token));const selected=exact.length?exact:groups.filter(g=>g.agents.includes('*'));const merged={rules:[],crawlDelayMs:0};for(const g of selected){merged.rules.push(...g.rules);if(g.crawlDelayMs)merged.crawlDelayMs=g.crawlDelayMs}return merged}
+
+export function isAllowed(rules,target){let bestAllow=-1,bestDisallow=-1;for(const rule of rules||[]){if(!ruleMatches(String(target),rule.value))continue;const specificity=rule.value.replace(/\*/g,'').length;if(rule.type==='allow')bestAllow=Math.max(bestAllow,specificity);else bestDisallow=Math.max(bestDisallow,specificity)}return bestAllow>=bestDisallow}
+
+export class RobotsChecker{
+  constructor({fetchImpl=fetch,timeoutMs=4000,userAgent='OmniBot/1.0',ttlMs=3600000,now=Date.now}={}){this.fetchImpl=fetchImpl;this.timeoutMs=timeoutMs;this.userAgent=userAgent;this.ttlMs=ttlMs;this.now=now;this.cache=new Map();}
+  async check(url){let u;try{u=new URL(url)}catch{return {allowed:false,unavailable:false,delayMs:0}}const origin=u.origin;const cached=this.cache.get(origin);if(cached&&cached.expiresAt>this.now()){const rules=selectRules(cached.groups,this.userAgent);return {allowed:isAllowed(rules.rules,u.pathname+u.search),unavailable:cached.unavailable,delayMs:rules.crawlDelayMs}}const robots=new URL('/robots.txt',u);let res;try{res=await this.fetchImpl(robots,{headers:{'user-agent':this.userAgent},signal:AbortSignal.timeout(this.timeoutMs)})}catch{this.cache.set(origin,{groups:[],unavailable:true,expiresAt:this.now()+this.ttlMs});return {allowed:false,unavailable:true,delayMs:0}}if(res.status>=400&&res.status<500){this.cache.set(origin,{groups:[],unavailable:false,expiresAt:this.now()+this.ttlMs});return {allowed:true,unavailable:false,delayMs:0}}if(!res.ok){this.cache.set(origin,{groups:[],unavailable:true,expiresAt:this.now()+this.ttlMs});return {allowed:false,unavailable:true,delayMs:0}}const groups=parseRobots(await res.text());this.cache.set(origin,{groups,unavailable:false,expiresAt:this.now()+this.ttlMs});const rules=selectRules(groups,this.userAgent);return {allowed:isAllowed(rules.rules,u.pathname+u.search),unavailable:false,delayMs:rules.crawlDelayMs}}
 }
 
-function parseRobots(text, userAgent) {
-  const groups=[];let current=null;
-  for(const raw of String(text||'').split(/\r?\n/)){
-    const line=raw.split('#')[0].trim();if(!line)continue;
-    const i=line.indexOf(':');if(i<0)continue;const key=line.slice(0,i).trim().toLowerCase();const value=line.slice(i+1).trim();
-    if(key==='user-agent'){current={agents:[],rules:[],delay:null};groups.push(current);current.agents.push(value.toLowerCase());}
-    else if(!current)continue;
-    else if(key==='user-agent')current.agents.push(value.toLowerCase());
-    else if(key==='disallow')current.rules.push({type:'disallow',value});
-    else if(key==='allow')current.rules.push({type:'allow',value});
-    else if(key==='crawl-delay'){const n=Number(value);if(Number.isFinite(n)&&n>=0)current.delay=n*1000;}
-  }
-  const ua=String(userAgent||'OmniBot/1.0').toLowerCase();
-  const matching=groups.filter(g=>g.agents.includes(ua));
-  const selected=matching.length?matching:groups.filter(g=>g.agents.includes('*'));
-  return selected.length?selected[0]:{agents:[],rules:[],delay:null};
-}
-
-export async function fetchRobots(url,{fetchImpl=fetch,timeoutMs=4000,userAgent='OmniBot/1.0'}={}) {
-  const u=new URL(url);const robots=new URL('/robots.txt',u);
-  let res;
-  try { res=await fetchImpl(robots,{headers:{'user-agent':userAgent},signal:AbortSignal.timeout(timeoutMs)}); }
-  catch { return {allowed:false,delayMs:null,failed:true}; }
-  if(res.status>=400&&res.status<500) return {allowed:true,delayMs:null,failed:false};
-  if(!res.ok) return {allowed:false,delayMs:null,failed:true};
-  const policy=parseRobots(await res.text(),userAgent);const pathname=u.pathname;
-  let bestAllow=-1,bestDisallow=-1;
-  for(const rule of policy.rules){if(!rule.value)continue;if(matchesRule(pathname,rule.value)){const len=rule.value.replace(/\*/g,'').length;if(rule.type==='allow')bestAllow=Math.max(bestAllow,len);else bestDisallow=Math.max(bestDisallow,len);}}
-  return {allowed:bestAllow>=bestDisallow,delayMs:policy.delay,failed:false};
-}
-
-export async function canCrawl(url,opts={}) { return (await fetchRobots(url,opts)).allowed; }
-
-export class RobotsChecker {
-  constructor(opts={}){this.opts=opts;this.cache=new Map();}
-  async check(url){const origin=new URL(url).origin;if(!this.cache.has(origin))this.cache.set(origin,await fetchRobots(url,this.opts));return this.cache.get(origin);}
-}
+export async function fetchRobots(url,opts={}){const checker=new RobotsChecker(opts);return checker.check(url)}
+export async function canCrawl(url,opts={}){return (await fetchRobots(url,opts)).allowed}
