@@ -45,6 +45,35 @@ test('browser shell includes session restore, drag reordering, pinned tabs and t
   assert.match(app, /key === 'tab'/);
 });
 
+test('search provider settings expose configured state and encrypt credentials in OS storage', () => {
+  const main = read('desktop/main.cjs');
+  const preload = read('desktop/preload.cjs');
+  const html = read('desktop/index.html');
+  const app = read('desktop/app.js');
+  assert.match(main, /safeStorage\.encryptString/);
+  assert.match(main, /safeStorage\.decryptString/);
+  assert.match(main, /provider-credentials\.json/);
+  assert.match(main, /providerAvailability:\s*\{/);
+  assert.match(main, /serpapi:\s*Boolean\(config\.keys\.serpapi\)/);
+  assert.match(preload, /saveProviderCredentials:\s*credentials => ipcRenderer\.invoke\('omni:save-provider-credentials'/);
+  assert.match(html, /data-settings-page="search"/);
+  assert.match(html, /id="serper-key"/);
+  assert.match(html, /id="serpapi-key"/);
+  assert.match(html, /id="exa-key"/);
+  assert.match(html, /id="firecrawl-key"/);
+  assert.match(app, /status\.providerAvailability/);
+  assert.match(app, /window\.omni\.saveProviderCredentials\(credentials\)/);
+});
+
+test('browser menu reserves only its measured height instead of a fixed oversized gap', () => {
+  const app = read('desktop/app.js');
+  const css = read('desktop/style.css');
+  assert.match(app, /browserMenu\.getBoundingClientRect\(\)\.bottom/);
+  assert.match(app, /setProperty\('--menu-space'/);
+  assert.match(css, /\.browser-chrome\.menu-open\s*\{\s*padding-bottom:\s*var\(--menu-space,\s*0px\)/);
+  assert.doesNotMatch(css, /\.browser-chrome\.menu-open\s*\{\s*padding-bottom:\s*min\(640px/);
+});
+
 test('Electron browser denies dangerous permission requests by default', () => {
   const main = read('desktop/main.cjs');
   assert.match(main, /setPermissionRequestHandler/);

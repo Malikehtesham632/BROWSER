@@ -86,6 +86,15 @@ function activeTab() {
 }
 
 function syncChromeHeight() {
+  if (!browserMenu.hidden) {
+    const toolbar = browserChrome.querySelector('.toolbar');
+    const baseHeight = toolbar.offsetTop + toolbar.offsetHeight;
+    const menuBottom = browserMenu.getBoundingClientRect().bottom - browserChrome.getBoundingClientRect().top;
+    const reserved = Math.max(0, Math.ceil(menuBottom + 8 - baseHeight));
+    browserChrome.style.setProperty('--menu-space', `${reserved}px`);
+  } else {
+    browserChrome.style.removeProperty('--menu-space');
+  }
   window.omni?.setChromeHeight(browserChrome.getBoundingClientRect().height);
 }
 
@@ -111,18 +120,23 @@ async function refreshSearchStatus() {
   try {
     const status = await window.omni.getSearchStatus();
     engineList.replaceChildren();
-    for (const provider of status.providers) {
+    const labels = {
+      serper: 'Google · Serper',
+      serpapi: 'Google · SerpApi',
+      exa: 'Exa',
+      searxng: 'SearXNG'
+    };
+    for (const provider of Object.keys(labels)) {
       const badge = document.createElement('span');
-      badge.className = 'engine-badge';
-      badge.textContent = provider === 'serper'
-        ? 'Google · Serper'
-        : provider === 'serpapi'
-          ? 'Google · SerpApi'
-          : provider === 'searxng'
-            ? 'SearXNG'
-            : provider[0].toUpperCase() + provider.slice(1);
+      const configured = Boolean(status.providerAvailability?.[provider] ?? status.providers.includes(provider));
+      badge.className = `engine-badge${configured ? ' configured' : ' unconfigured'}`;
+      badge.textContent = `${labels[provider]} · ${configured ? 'Ready' : 'Needs setup'}`;
       engineList.append(badge);
     }
+    const extraction = document.createElement('span');
+    extraction.className = `engine-badge${status.providerAvailability?.firecrawl ? ' configured' : ' unconfigured'}`;
+    extraction.textContent = `Firecrawl extraction · ${status.providerAvailability?.firecrawl ? 'Ready' : 'Needs setup'}`;
+    engineList.append(extraction);
     const ready = status.providers.length > 0 || status.indexDocuments > 0;
     summary.textContent = ready
       ? `${status.providers.length} search source${status.providers.length === 1 ? '' : 's'} configured`
@@ -132,7 +146,11 @@ async function refreshSearchStatus() {
       : 'Connect a search source to get started';
     indexStatus.textContent = status.indexDocuments
       ? `${status.indexDocuments.toLocaleString()} pages in your local index · AI ${status.aiConfigured ? 'ready' : 'not set up'}`
-      : `AI ${status.aiConfigured ? 'ready' : 'not set up'} · ${ready ? 'Live web search configured' : 'Add search-provider keys to your .env file'}`;
+      : `AI ${status.aiConfigured ? 'ready' : 'not set up'} · ${ready ? 'Live web search configured' : 'Open Settings → Search sources to add provider keys'}`;
+    for (const provider of ['serper', 'serpapi', 'exa', 'firecrawl']) {
+      const configured = Boolean(status.providerAvailability?.[provider]);
+      document.querySelector(`#${provider}-key-status`).textContent = configured ? 'Configured · key is stored securely' : 'Not configured';
+    }
   } catch (error) {
     const message = reportUiError('Could not load search status', error);
     summary.textContent = message;
@@ -145,8 +163,8 @@ async function openBrowserMenu() {
   browserChrome.classList.add('menu-open');
   menuToggle.setAttribute('aria-expanded', 'true');
   menuToggle.setAttribute('aria-label', 'Close browser menu');
-  syncChromeHeight();
   await refreshSearchStatus();
+  syncChromeHeight();
 }
 
 async function openSettings() {
@@ -160,6 +178,31 @@ async function openSettings() {
     showToast(reportUiError('Could not open browser settings', error));
   }
 }
+
+document.querySelector('#provider-settings-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const credentials = Object.fromEntries(new FormData(form));
+  if (!Object.values(credentials).some(value => String(value).trim())) {
+    document.querySelector('#settings-status').textContent = 'Enter at least one provider API key before saving.';
+    return;
+  }
+  const saveButton = document.querySelector('#save-provider-keys');
+  saveButton.disabled = true;
+  try {
+    await window.omni.saveProviderCredentials(credentials);
+    for (const input of form.querySelectorAll('input[type="password"]')) input.value = '';
+    document.querySelector('#settings-status').textContent = 'Keys saved securely. Restart Nova to activate the providers.';
+    document.querySelector('#restart-for-providers').hidden = false;
+    await refreshSearchStatus();
+  } catch (error) {
+    document.querySelector('#settings-status').textContent = error.message || 'Could not save provider keys.';
+    console.error('[Nova Browser] Could not save provider keys:', error);
+  } finally {
+    saveButton.disabled = false;
+  }
+});
+document.querySelector('#restart-for-providers').addEventListener('click', () => window.omni.restart());
 
 document.querySelector('#settings-close').addEventListener('click', () => settingsDialog.close());
 settingsDialog.addEventListener('click', event => {
@@ -763,6 +806,7 @@ window.omni.getState().then(renderState).catch(error => showToast(reportUiError(
   aiButton.disabled = true;
 }
 new ResizeObserver(syncChromeHeight).observe(browserChrome);
+new ResizeObserver(syncChromeHeight).observe(browserMenu);
 window.addEventListener('resize', syncChromeHeight);
 window.addEventListener('keydown', event => {
   const key = event.key.toLowerCase();

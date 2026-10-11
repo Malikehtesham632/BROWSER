@@ -198,6 +198,7 @@
     <nav class="settings-nav" aria-label="Settings categories">
       <button type="button" class="settings-nav-item selected" data-settings-page="general" aria-current="page">General</button>
       <button type="button" class="settings-nav-item" data-settings-page="appearance">Appearance</button>
+      <button type="button" class="settings-nav-item" data-settings-page="search">Search sources</button>
     </nav>
     <section class="settings-page" data-settings-panel="general">
       <h3>Startup</h3>
@@ -212,6 +213,18 @@
         <button class="theme-choice" type="button" data-theme-choice="dark"><span class="theme-swatch dark-swatch"></span><span>Midnight</span><span class="theme-check">✓</span></button>
         <button class="theme-choice" type="button" data-theme-choice="light"><span class="theme-swatch light-swatch"></span><span>Daylight</span><span class="theme-check">✓</span></button>
       </div>
+    </section>
+    <section class="settings-page provider-settings" data-settings-panel="search" hidden>
+      <h3>Search providers</h3>
+      <p class="settings-description">Add provider API keys to enable web search. Keys are encrypted with Windows secure storage on this computer.</p>
+      <form id="provider-settings-form">
+        <label class="provider-key-row" for="serper-key"><span><strong>Google · Serper</strong><small id="serper-key-status">Not configured</small></span><input id="serper-key" name="serper" type="password" autocomplete="new-password" placeholder="Paste API key"></label>
+        <label class="provider-key-row" for="serpapi-key"><span><strong>Google · SerpApi</strong><small id="serpapi-key-status">Not configured</small></span><input id="serpapi-key" name="serpapi" type="password" autocomplete="new-password" placeholder="Paste API key"></label>
+        <label class="provider-key-row" for="exa-key"><span><strong>Exa</strong><small id="exa-key-status">Not configured</small></span><input id="exa-key" name="exa" type="password" autocomplete="new-password" placeholder="Paste API key"></label>
+        <label class="provider-key-row" for="firecrawl-key"><span><strong>Firecrawl extraction</strong><small id="firecrawl-key-status">Not configured · page extraction only</small></span><input id="firecrawl-key" name="firecrawl" type="password" autocomplete="new-password" placeholder="Paste API key"></label>
+        <div class="provider-settings-actions"><button id="save-provider-keys" class="onboarding-continue" type="submit">Save keys securely</button><button id="restart-for-providers" class="onboarding-continue" type="button" hidden>Restart Nova to apply</button></div>
+      </form>
+      <p class="settings-description">SearXNG is configured separately by instance URL in your Nova .env file. Firecrawl is for page extraction, not search results.</p>
     </section>
     <p id="settings-status" class="settings-status" role="status" aria-live="polite"></p>
   </dialog>

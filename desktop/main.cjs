@@ -1,7 +1,7 @@
 const path = require('node:path');
 const fs = require('node:fs');
 const { pathToFileURL } = require('node:url');
-const { app, BrowserWindow, WebContentsView, ipcMain, dialog, session, shell } = require('electron');
+const { app, BrowserWindow, WebContentsView, ipcMain, dialog, session, shell, safeStorage } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { normalizeBrowserAddress } = require('./browser-url.cjs');
 
@@ -13,6 +13,7 @@ let configFile;
 let config;
 let engineServer;
 let browserSettingsFile;
+let providerCredentialsFile;
 let browserSettings = { restoreSession: false, tabs: [], activeTabIndex: 0 };
 let updateFeedConfigured = false;
 let updaterInitialized = false;
@@ -26,6 +27,57 @@ app.setName('Nova Browser');
 app.setAppUserModelId('com.nova.browser');
 app.setPath('userData', path.join(app.getPath('appData'), 'Nova Browser'));
 browserSettingsFile = path.join(app.getPath('userData'), 'browser-settings.json');
+providerCredentialsFile = path.join(app.getPath('userData'), 'provider-credentials.json');
+
+const credentialProviders = ['serper', 'serpapi', 'exa', 'firecrawl'];
+const searchProviderLabels = {
+  serper: 'Google · Serper',
+  serpapi: 'Google · SerpApi',
+  exa: 'Exa',
+  searxng: 'SearXNG'
+};
+
+function readProviderCredentials() {
+  if (!fs.existsSync(providerCredentialsFile)) return {};
+  if (!safeStorage.isEncryptionAvailable()) {
+    console.warn('[Nova Browser] OS credential encryption is unavailable; saved provider keys were not loaded.');
+    return {};
+  }
+  let encrypted;
+  try {
+    encrypted = JSON.parse(fs.readFileSync(providerCredentialsFile, 'utf8'));
+  } catch (error) {
+    if (error.code === 'ENOENT') return {};
+    console.warn('[Nova Browser] Could not read encrypted provider credentials.', error.message);
+    return {};
+  }
+  if (!encrypted || typeof encrypted !== 'object' || Array.isArray(encrypted)) return {};
+  const credentials = {};
+  for (const provider of credentialProviders) {
+    if (typeof encrypted[provider] !== 'string') continue;
+    try {
+      credentials[provider] = safeStorage.decryptString(Buffer.from(encrypted[provider], 'base64'));
+    } catch (error) {
+      console.warn(`[Nova Browser] Could not decrypt the saved ${provider} credential.`, error.message);
+    }
+  }
+  return credentials;
+}
+
+function writeProviderCredentials(credentials) {
+  if (!safeStorage.isEncryptionAvailable()) {
+    throw new Error('Secure credential storage is unavailable on this computer.');
+  }
+  const encrypted = {};
+  for (const provider of credentialProviders) {
+    if (credentials[provider]) {
+      encrypted[provider] = safeStorage.encryptString(credentials[provider]).toString('base64');
+    }
+  }
+  const temporaryFile = `${providerCredentialsFile}.tmp`;
+  fs.writeFileSync(temporaryFile, JSON.stringify(encrypted), { mode: 0o600 });
+  fs.renameSync(temporaryFile, providerCredentialsFile);
+}
 
 function readBrowserSettings() {
   let saved;
@@ -447,9 +499,43 @@ function registerIpc() {
   });
   ipcMain.handle('omni:get-search-status', () => ({
     providers: engine.providerNames(),
+    providerAvailability: {
+      serper: Boolean(config.keys.serper),
+      serpapi: Boolean(config.keys.serpapi),
+      exa: Boolean(config.keys.exa),
+      searxng: Boolean(config.searxngEnabled && config.searxngInstances.length),
+      firecrawl: Boolean(config.keys.firecrawl)
+    },
     indexDocuments: engine.indexStats().documents || 0,
     aiConfigured: Boolean(queryGenerator)
   }));
+  ipcMain.handle('omni:save-provider-credentials', (_event, input) => {
+    if (!input || typeof input !== 'object' || Array.isArray(input)) {
+      throw new TypeError('Provider settings are invalid.');
+    }
+    const credentials = readProviderCredentials();
+    for (const provider of credentialProviders) {
+      const value = input[provider];
+      if (value === undefined || value === '') continue;
+      if (typeof value !== 'string' || value.length > 4096 || /[\r\n]/.test(value)) {
+        throw new TypeError(`The ${provider} key must be a single line no longer than 4096 characters.`);
+      }
+      credentials[provider] = value.trim();
+      if (!credentials[provider]) delete credentials[provider];
+    }
+    const clear = input.clear;
+    if (clear !== undefined && (!Array.isArray(clear) || clear.some(name => !credentialProviders.includes(name)))) {
+      throw new TypeError('Provider clear settings are invalid.');
+    }
+    for (const provider of clear || []) delete credentials[provider];
+    writeProviderCredentials(credentials);
+    return { saved: true, restartRequired: true };
+  });
+  ipcMain.handle('browser:restart', () => {
+    app.relaunch();
+    app.quit();
+    return true;
+  });
   ipcMain.handle('browser:get-state', () => ({
     activeTabId,
     tabs: [...tabs.values()].map(publicTab)
@@ -603,6 +689,10 @@ async function initialize() {
   configFile = path.join(app.isPackaged ? userDataPath : root, '.env');
   loadEnvFile(configFile);
   config = loadConfig();
+  const storedCredentials = readProviderCredentials();
+  for (const provider of credentialProviders) {
+    if (!config.keys[provider] && storedCredentials[provider]) config.keys[provider] = storedCredentials[provider];
+  }
   const dataPath = path.join(userDataPath, 'data');
   fs.mkdirSync(dataPath, { recursive: true });
   if (!process.env.OMNI_INDEX_FILE) config.indexFile = path.join(dataPath, 'omni-index.json');

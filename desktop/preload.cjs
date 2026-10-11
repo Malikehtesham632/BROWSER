@@ -4,6 +4,8 @@ contextBridge.exposeInMainWorld('omni', Object.freeze({
   search: (query, searchId) => ipcRenderer.invoke('omni:search', query, searchId),
   generateQueries: query => ipcRenderer.invoke('omni:generate-queries', query),
   getSearchStatus: () => ipcRenderer.invoke('omni:get-search-status'),
+  saveProviderCredentials: credentials => ipcRenderer.invoke('omni:save-provider-credentials', credentials),
+  restart: () => ipcRenderer.invoke('browser:restart'),
   getState: () => ipcRenderer.invoke('browser:get-state'),
   getPreferences: () => ipcRenderer.invoke('browser:get-preferences'),
   setPreferences: preferences => ipcRenderer.invoke('browser:set-preferences', preferences),
