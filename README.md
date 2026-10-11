@@ -195,17 +195,6 @@ npm start          # then open http://127.0.0.1:8787/
 npm run browser    # desktop app (Electron)
 ```
 
-What's in it:
-- Firefox-style tab strip merged into the title bar (desktop), toolbar and unified address bar
-- Light and dark themes that follow the system, with a manual override in Settings
-- Address-bar dropdown: search suggestion, bookmarks and history, with full keyboard navigation
-- Independent tabs, each with its own back/forward history; going back or forward restores cached results instantly
-- Results show the site, a breadcrumb path, highlighted query terms and which sources found each page
-- Source chips double as filters; the sidebar shows live provider activity and query analysis
-- Bookmarks (searches and individual pages), searchable history grouped by day, sidebar panel, Downloads placeholder
-- Settings: theme, results per search, Omni Engine status, privacy controls, Nova updates
-- Real-time `/search/stream` integration with a loading bar and per-tab spinner
+The desktop app includes an integrated tab strip, address and navigation controls, a browser menu, light/dark appearance settings, and a startup option to restore the previous session. Tabs can be reordered by dragging, pinned, duplicated, muted, closed, and reopened; each tab has its own browsing history. Search results are opened in the active browser tab.
 
-Keyboard shortcuts: `Ctrl+L` address bar, `Ctrl+T` new tab, `Ctrl+W` close tab, `Ctrl+Tab` next tab, `Ctrl+1..9` jump to tab, `Ctrl+D` bookmark, `Ctrl+B` sidebar, `Ctrl+H` history, `Ctrl+Shift+O` bookmarks, `Ctrl+J` downloads, `Ctrl+,` settings, `Ctrl+R`/`F5` reload, `Alt+Left/Right` back/forward, `Esc` stop.
-
-Result links currently open in a new window. Rendering pages inside tabs is the next step.
+The browser menu includes zoom, find-in-page, fullscreen, search-provider status, and settings. Keyboard shortcuts include `Ctrl+L` to focus the address bar, `Ctrl+T` to open a tab, `Ctrl+W` to close a tab, `Ctrl+Shift+T` to reopen the last closed tab, `Ctrl+Tab` / `Ctrl+Shift+Tab` to switch tabs, `Ctrl+R` to reload or stop loading, `Ctrl+F` to find in page, `Alt+S` to open settings, `F11` for fullscreen, and `Alt+Left/Right` for back/forward.

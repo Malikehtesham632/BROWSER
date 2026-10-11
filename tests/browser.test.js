@@ -19,6 +19,32 @@ test('audio state changes handle Electron boolean or missing payloads safely', (
   assert.doesNotMatch(main, /audio-state-changed',\s*\(_event,\s*\{\s*audible/);
 });
 
+test('browser preferences use validated main-process IPC and expose working settings controls', () => {
+  const main = read('desktop/main.cjs');
+  const preload = read('desktop/preload.cjs');
+  const html = read('desktop/index.html');
+  const app = read('desktop/app.js');
+  assert.match(main, /ipcMain\.handle\('browser:set-preferences'/);
+  assert.match(main, /typeof preferences\.restoreSession !== 'boolean'/);
+  assert.match(main, /normalizeBrowserAddress\(tab\.url\)/);
+  assert.match(preload, /getPreferences: \(\) => ipcRenderer\.invoke\('browser:get-preferences'\)/);
+  assert.match(preload, /setPreferences: preferences => ipcRenderer\.invoke\('browser:set-preferences', preferences\)/);
+  assert.match(html, /id="settings-dialog"/);
+  assert.match(html, /id="restore-session"/);
+  assert.match(app, /window\.omni\.setPreferences\(\{ restoreSession: checkbox\.checked \}\)/);
+});
+
+test('browser shell includes session restore, drag reordering, pinned tabs and tab shortcuts', () => {
+  const main = read('desktop/main.cjs');
+  const app = read('desktop/app.js');
+  assert.match(main, /browserSettings\.restoreSession && browserSettings\.tabs\.length/);
+  assert.match(main, /window\.on\('close', persistBrowserSession\)/);
+  assert.match(main, /browser:pin-tab/);
+  assert.match(app, /button\.addEventListener\('drop'/);
+  assert.match(app, /window\.omni\.pinTab\(tab\.id\)/);
+  assert.match(app, /key === 'tab'/);
+});
+
 test('Electron browser denies dangerous permission requests by default', () => {
   const main = read('desktop/main.cjs');
   assert.match(main, /setPermissionRequestHandler/);

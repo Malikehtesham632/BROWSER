@@ -12,6 +12,8 @@ let window;
 let configFile;
 let config;
 let engineServer;
+let browserSettingsFile;
+let browserSettings = { restoreSession: false, tabs: [], activeTabIndex: 0 };
 let updateFeedConfigured = false;
 let updaterInitialized = false;
 let chromeHeight = 96;
@@ -23,6 +25,62 @@ const closedTabs = [];
 app.setName('Nova Browser');
 app.setAppUserModelId('com.nova.browser');
 app.setPath('userData', path.join(app.getPath('appData'), 'Nova Browser'));
+browserSettingsFile = path.join(app.getPath('userData'), 'browser-settings.json');
+
+function readBrowserSettings() {
+  let saved;
+  try {
+    saved = JSON.parse(fs.readFileSync(browserSettingsFile, 'utf8'));
+  } catch (error) {
+    if (error.code === 'ENOENT') return;
+    console.warn('[Nova Browser] Could not read browser settings; using defaults.', error.message);
+    return;
+  }
+  if (!saved || typeof saved !== 'object' || Array.isArray(saved)) {
+    console.warn('[Nova Browser] Browser settings have an invalid format; using defaults.');
+    return;
+  }
+  browserSettings.restoreSession = saved.restoreSession === true;
+  browserSettings.tabs = [];
+  if (Array.isArray(saved.tabs)) {
+    for (const tab of saved.tabs.slice(0, 50)) {
+      if (!tab || typeof tab !== 'object' || Array.isArray(tab)) continue;
+      if (tab.url === null) {
+        browserSettings.tabs.push({ url: null, pinned: tab.pinned === true });
+        continue;
+      }
+      if (typeof tab.url !== 'string') continue;
+      const url = normalizeBrowserAddress(tab.url);
+      if (url) browserSettings.tabs.push({ url, pinned: tab.pinned === true });
+    }
+  }
+  browserSettings.activeTabIndex = Number.isInteger(saved.activeTabIndex)
+    ? Math.max(0, Math.min(saved.activeTabIndex, Math.max(0, browserSettings.tabs.length - 1)))
+    : 0;
+}
+
+function writeBrowserSettings() {
+  fs.mkdirSync(path.dirname(browserSettingsFile), { recursive: true });
+  const temporaryFile = `${browserSettingsFile}.tmp`;
+  fs.writeFileSync(temporaryFile, JSON.stringify(browserSettings, null, 2), { mode: 0o600 });
+  fs.renameSync(temporaryFile, browserSettingsFile);
+}
+
+function persistBrowserSession() {
+  if (tabs.size) {
+    browserSettings.tabs = browserSettings.restoreSession
+      ? [...tabs.values()].map(tab => ({ url: tab.isHome ? null : normalizeBrowserAddress(tab.url), pinned: tab.pinned }))
+      : [];
+    browserSettings.activeTabIndex = Math.max(0, [...tabs.keys()].indexOf(activeTabId));
+  } else if (!browserSettings.restoreSession) {
+    browserSettings.tabs = [];
+  }
+  try {
+    writeBrowserSettings();
+  } catch (error) {
+    console.error('[Nova Browser] Could not save browser settings.', error);
+  }
+}
 
 function publicTab(tab) {
   return {
@@ -396,6 +454,23 @@ function registerIpc() {
     activeTabId,
     tabs: [...tabs.values()].map(publicTab)
   }));
+  ipcMain.handle('browser:get-preferences', () => ({ restoreSession: browserSettings.restoreSession }));
+  ipcMain.handle('browser:set-preferences', (_event, preferences) => {
+    if (!preferences || typeof preferences !== 'object' || typeof preferences.restoreSession !== 'boolean') {
+      throw new TypeError('Browser preferences are invalid.');
+    }
+    browserSettings.restoreSession = preferences.restoreSession;
+    if (tabs.size) {
+      browserSettings.tabs = browserSettings.restoreSession
+        ? [...tabs.values()].map(tab => ({ url: tab.isHome ? null : normalizeBrowserAddress(tab.url), pinned: tab.pinned }))
+        : [];
+      browserSettings.activeTabIndex = Math.max(0, [...tabs.keys()].indexOf(activeTabId));
+    } else if (!browserSettings.restoreSession) {
+      browserSettings.tabs = [];
+    }
+    writeBrowserSettings();
+    return { restoreSession: browserSettings.restoreSession };
+  });
   ipcMain.handle('browser:new-tab', () => createTab());
   ipcMain.handle('browser:close-tab', (_event, id) => closeTab(id));
   ipcMain.handle('browser:activate-tab', (_event, id) => activateTab(id));
@@ -524,6 +599,7 @@ async function initialize() {
   const { createQueryGenerator } = await importFromRoot('src/queries/generator.js');
 
   const userDataPath = app.getPath('userData');
+  readBrowserSettings();
   configFile = path.join(app.isPackaged ? userDataPath : root, '.env');
   loadEnvFile(configFile);
   config = loadConfig();
@@ -600,8 +676,14 @@ async function createBrowserWindow() {
   });
   await window.loadURL(appUrl);
   if (!updateFeedConfigured) window.webContents.send('updater:state', { state: 'not-configured' });
-  createTab();
+  if (browserSettings.restoreSession && browserSettings.tabs.length) {
+    const restoredIds = browserSettings.tabs.map(tab => createTab(tab.url, { pinned: tab.pinned }));
+    activateTab(restoredIds[browserSettings.activeTabIndex] || restoredIds[0]);
+  } else {
+    createTab();
+  }
   window.on('resize', updateViewBounds);
+  window.on('close', persistBrowserSession);
   window.on('closed', () => {
     window = null;
     tabs.clear();
@@ -624,5 +706,6 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {
+  persistBrowserSession();
   if (engineServer?.listening) engineServer.close();
 });

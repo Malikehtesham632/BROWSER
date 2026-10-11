@@ -19,6 +19,7 @@ const findForm = document.querySelector('#menu-find-form');
 const findInput = document.querySelector('#menu-find-query');
 const toast = document.querySelector('#toast');
 const firstRun = document.querySelector('#first-run');
+const settingsDialog = document.querySelector('#settings-dialog');
 let state = { activeTabId: null, tabs: [] };
 let toastTimer;
 let searchSequence = 0;
@@ -69,7 +70,13 @@ function finishFirstRun() {
 setTheme(preferences().theme);
 if (!preferences().completed) firstRun.showModal();
 document.querySelectorAll('[data-theme-choice]').forEach(button => {
-  button.addEventListener('click', () => setTheme(button.dataset.themeChoice));
+  button.addEventListener('click', () => {
+    setTheme(button.dataset.themeChoice);
+    localStorage.setItem(PREFERENCES_KEY, JSON.stringify({
+      ...preferences(),
+      theme: button.dataset.themeChoice
+    }));
+  });
 });
 document.querySelector('#first-run-continue').addEventListener('click', finishFirstRun);
 document.querySelector('#first-run-skip').addEventListener('click', finishFirstRun);
@@ -141,6 +148,55 @@ async function openBrowserMenu() {
   syncChromeHeight();
   await refreshSearchStatus();
 }
+
+async function openSettings() {
+  closeBrowserMenu();
+  try {
+    const preferences = await window.omni.getPreferences();
+    document.querySelector('#restore-session').checked = preferences.restoreSession;
+    document.querySelector('#settings-status').textContent = '';
+    settingsDialog.showModal();
+  } catch (error) {
+    showToast(reportUiError('Could not open browser settings', error));
+  }
+}
+
+document.querySelector('#settings-close').addEventListener('click', () => settingsDialog.close());
+settingsDialog.addEventListener('click', event => {
+  if (event.target === settingsDialog) settingsDialog.close();
+});
+settingsDialog.addEventListener('cancel', event => {
+  event.preventDefault();
+  settingsDialog.close();
+});
+document.querySelectorAll('[data-settings-page]').forEach(button => {
+  button.addEventListener('click', () => {
+    for (const item of document.querySelectorAll('[data-settings-page]')) {
+      const selected = item === button;
+      item.classList.toggle('selected', selected);
+      if (selected) item.setAttribute('aria-current', 'page');
+      else item.removeAttribute('aria-current');
+    }
+    for (const panel of document.querySelectorAll('[data-settings-panel]')) {
+      panel.hidden = panel.dataset.settingsPanel !== button.dataset.settingsPage;
+    }
+  });
+});
+document.querySelector('#restore-session').addEventListener('change', async event => {
+  const checkbox = event.currentTarget;
+  checkbox.disabled = true;
+  try {
+    const preferences = await window.omni.setPreferences({ restoreSession: checkbox.checked });
+    checkbox.checked = preferences.restoreSession;
+    document.querySelector('#settings-status').textContent = 'Settings saved.';
+  } catch (error) {
+    checkbox.checked = !checkbox.checked;
+    document.querySelector('#settings-status').textContent = 'Could not save this setting.';
+    console.error('[Nova Browser] Could not save browser settings:', error);
+  } finally {
+    checkbox.disabled = false;
+  }
+});
 
 async function setPageZoom(action) {
   try {
@@ -584,6 +640,9 @@ browserMenu.addEventListener('click', event => {
       closeBrowserMenu();
       document.querySelector('#home').click();
       break;
+    case 'settings':
+      openSettings();
+      break;
     case 'theme':
       document.querySelector('#theme-toggle').click();
       document.querySelector('#menu-theme-label').textContent = document.documentElement.dataset.theme === 'dark'
@@ -707,7 +766,10 @@ new ResizeObserver(syncChromeHeight).observe(browserChrome);
 window.addEventListener('resize', syncChromeHeight);
 window.addEventListener('keydown', event => {
   const key = event.key.toLowerCase();
-  if ((event.ctrlKey || event.metaKey) && key === 'l') {
+  if (event.altKey && key === 's') {
+    event.preventDefault();
+    openSettings();
+  } else if ((event.ctrlKey || event.metaKey) && key === 'l') {
     event.preventDefault();
     address.focus();
     address.select();

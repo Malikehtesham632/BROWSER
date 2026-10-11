@@ -69,6 +69,7 @@
         <button class="menu-item" type="button" data-menu-action="close-tab"><span class="menu-item-icon">×</span><span>Close tab</span><kbd>Ctrl+W</kbd></button>
         <button class="menu-item" type="button" data-menu-action="reload"><span class="menu-item-icon">↻</span><span>Reload page</span><kbd>Ctrl+R</kbd></button>
         <button class="menu-item" type="button" data-menu-action="home"><span class="menu-item-icon">⌂</span><span>New tab page</span></button>
+        <button class="menu-item" type="button" data-menu-action="settings"><span class="menu-item-icon">⚙</span><span>Settings</span><kbd>Alt+S</kbd></button>
       </div>
       <div class="menu-group find-group">
         <button id="menu-find-open" class="menu-item" type="button"><span class="menu-item-icon">⌕</span><span>Find in page</span><kbd>Ctrl+F</kbd></button>
@@ -188,6 +189,31 @@
     </div>
     <button id="first-run-continue" class="onboarding-continue" type="button">Continue to Nova <span>→</span></button>
     <button id="first-run-skip" class="onboarding-skip" type="button">Skip for now</button>
+  </dialog>
+  <dialog id="settings-dialog" class="settings-dialog" aria-labelledby="settings-title">
+    <header class="settings-header">
+      <div><p class="eyebrow">NOVA BROWSER</p><h2 id="settings-title">Settings</h2></div>
+      <button id="settings-close" class="menu-close" type="button" aria-label="Close settings">×</button>
+    </header>
+    <nav class="settings-nav" aria-label="Settings categories">
+      <button type="button" class="settings-nav-item selected" data-settings-page="general" aria-current="page">General</button>
+      <button type="button" class="settings-nav-item" data-settings-page="appearance">Appearance</button>
+    </nav>
+    <section class="settings-page" data-settings-panel="general">
+      <h3>Startup</h3>
+      <label class="setting-row" for="restore-session">
+        <span><strong>Restore previous session</strong><small>Reopen your tabs when Nova starts again.</small></span>
+        <input id="restore-session" type="checkbox">
+      </label>
+    </section>
+    <section class="settings-page" data-settings-panel="appearance" hidden>
+      <h3>Theme</h3>
+      <div class="settings-theme-choices" role="group" aria-label="Browser theme">
+        <button class="theme-choice" type="button" data-theme-choice="dark"><span class="theme-swatch dark-swatch"></span><span>Midnight</span><span class="theme-check">✓</span></button>
+        <button class="theme-choice" type="button" data-theme-choice="light"><span class="theme-swatch light-swatch"></span><span>Daylight</span><span class="theme-check">✓</span></button>
+      </div>
+    </section>
+    <p id="settings-status" class="settings-status" role="status" aria-live="polite"></p>
   </dialog>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script type="module" src="/browser/app.js"></script>

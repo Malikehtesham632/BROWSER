@@ -5,6 +5,8 @@ contextBridge.exposeInMainWorld('omni', Object.freeze({
   generateQueries: query => ipcRenderer.invoke('omni:generate-queries', query),
   getSearchStatus: () => ipcRenderer.invoke('omni:get-search-status'),
   getState: () => ipcRenderer.invoke('browser:get-state'),
+  getPreferences: () => ipcRenderer.invoke('browser:get-preferences'),
+  setPreferences: preferences => ipcRenderer.invoke('browser:set-preferences', preferences),
   newTab: () => ipcRenderer.invoke('browser:new-tab'),
   closeTab: id => ipcRenderer.invoke('browser:close-tab', id),
   activateTab: id => ipcRenderer.invoke('browser:activate-tab', id),
