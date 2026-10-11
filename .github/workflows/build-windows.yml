@@ -1,0 +1,50 @@
+name: Build Nova Browser Windows Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/firefox-inspired-ui
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run repository tests
+        run: npm test
+
+      - name: Build Windows installer
+        run: npm run dist -- --win nsis
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nova-Browser-Windows-Installer
+          path: release/*.exe
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload build metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nova-Browser-Build-Metadata
+          path: release/*.yml
+          if-no-files-found: warn
+          retention-days: 14
