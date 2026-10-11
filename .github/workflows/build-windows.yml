@@ -10,7 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  build-windows:
+  test:
+    name: Repository tests
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -27,6 +28,22 @@ jobs:
 
       - name: Run repository tests
         run: npm test
+
+  build-windows:
+    name: Build Windows installer
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Build Windows installer
         run: npm run dist -- --win nsis
