@@ -17,7 +17,6 @@ function makeConfig(overrides = {}) {
 
 const engine = {
   providerNames: () => ['fake'],
-  providerHealth: () => ({ fake: { healthy: true } }),
   indexStats: () => ({ documents: 0 }),
   search: async (query) => ({
     query,
@@ -58,9 +57,7 @@ test('server allows a public host when a token is set', () => {
 
 test('health is open but search needs the token', async () => {
   await withServer(makeConfig({ apiToken: 'secret', rateLimitPerMinute: 100 }), async (base) => {
-    const health = await fetch(`${base}/health`);
-    assert.equal(health.status, 200);
-    assert.deepEqual((await health.json()).providerHealth, { fake: { healthy: true } });
+    assert.equal((await fetch(`${base}/health`)).status, 200);
     assert.equal((await fetch(`${base}/search?q=test`)).status, 401);
     const wrong = await fetch(`${base}/search?q=test`, {
       headers: { Authorization: 'Bearer nope' }
@@ -94,17 +91,5 @@ test('generation endpoints say they are not configured when Gemini is off', asyn
   await withServer(makeConfig({ rateLimitPerMinute: 100 }), async (base) => {
     assert.equal((await fetch(`${base}/queries/generate?seed=x`)).status, 503);
     assert.equal((await fetch(`${base}/queries/smart?q=x`)).status, 503);
-  });
-});
-
-test('desktop browser shell and assets are served from the same local origin', async () => {
-  await withServer(makeConfig({ rateLimitPerMinute: 100 }), async (base) => {
-    const html = await fetch(`${base}/browser`);
-    assert.equal(html.status, 200);
-    const markup = await html.text();
-    assert.match(markup, /href="\/browser\/style\.css"/);
-    assert.match(markup, /src="\/browser\/app\.js"/);
-    assert.equal((await fetch(`${base}/browser/app.js`)).status, 200);
-    assert.equal((await fetch(`${base}/browser/style.css`)).status, 200);
   });
 });

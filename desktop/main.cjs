@@ -1,175 +1,152 @@
 const path = require('node:path');
-const fs = require('node:fs');
 const { pathToFileURL } = require('node:url');
-const { app, BrowserWindow, WebContentsView, ipcMain, dialog, session, shell, safeStorage } = require('electron');
-const { autoUpdater } = require('electron-updater');
+const { app, BrowserWindow, WebContentsView, ipcMain, dialog, Menu, session } = require('electron');
 const { normalizeBrowserAddress } = require('./browser-url.cjs');
+const { Library } = require('./library.cjs');
+const { createPermissionPolicy } = require('./permissions.cjs');
+
+const PAGE_IGNORED_COMMANDS = new Set(['bookmarks-sidebar', 'focus-search']);
+const MAX_CLOSED_TABS = 15;
+const SNAPSHOT_TIMEOUT_MS = 600;
+const NAVIGATION_ERROR_MESSAGE =
+  'We could not open that page. Check the address or your connection, then try again.';
 
 let engine;
 let store;
 let queryGenerator;
-let window;
+let window = null;
 let configFile;
-let config;
-let engineServer;
-let browserSettingsFile;
-let providerCredentialsFile;
-let browserSettings = { restoreSession: false, tabs: [], activeTabIndex: 0 };
-let updateFeedConfigured = false;
-let updaterInitialized = false;
-let chromeHeight = 96;
+let library;
+let permissions;
+let shortcuts;
+let layout = { top: 126, left: 0, right: 0, bottom: 0 };
+let overlayOpen = false;
 let nextTabId = 1;
 let activeTabId = null;
-const tabs = new Map();
+let order = [];
+let ipcRegistered = false;
+let quitting = false;
+let libraryTimer = null;
 const closedTabs = [];
+const tabs = new Map();
 
 app.setName('Nova Browser');
 app.setAppUserModelId('com.nova.browser');
 app.setPath('userData', path.join(app.getPath('appData'), 'Nova Browser'));
-browserSettingsFile = path.join(app.getPath('userData'), 'browser-settings.json');
-providerCredentialsFile = path.join(app.getPath('userData'), 'provider-credentials.json');
 
-const credentialProviders = ['serper', 'serpapi', 'exa', 'firecrawl'];
-const searchProviderLabels = {
-  serper: 'Google · Serper',
-  serpapi: 'Google · SerpApi',
-  exa: 'Exa',
-  searxng: 'SearXNG'
-};
-
-function readProviderCredentials() {
-  if (!fs.existsSync(providerCredentialsFile)) return {};
-  if (!safeStorage.isEncryptionAvailable()) {
-    console.warn('[Nova Browser] OS credential encryption is unavailable; saved provider keys were not loaded.');
-    return {};
-  }
-  let encrypted;
-  try {
-    encrypted = JSON.parse(fs.readFileSync(providerCredentialsFile, 'utf8'));
-  } catch (error) {
-    if (error.code === 'ENOENT') return {};
-    console.warn('[Nova Browser] Could not read encrypted provider credentials.', error.message);
-    return {};
-  }
-  if (!encrypted || typeof encrypted !== 'object' || Array.isArray(encrypted)) return {};
-  const credentials = {};
-  for (const provider of credentialProviders) {
-    if (typeof encrypted[provider] !== 'string') continue;
-    try {
-      credentials[provider] = safeStorage.decryptString(Buffer.from(encrypted[provider], 'base64'));
-    } catch (error) {
-      console.warn(`[Nova Browser] Could not decrypt the saved ${provider} credential.`, error.message);
-    }
-  }
-  return credentials;
+function uiAlive() {
+  return Boolean(window) && !window.isDestroyed();
 }
 
-function writeProviderCredentials(credentials) {
-  if (!safeStorage.isEncryptionAvailable()) {
-    throw new Error('Secure credential storage is unavailable on this computer.');
-  }
-  const encrypted = {};
-  for (const provider of credentialProviders) {
-    if (credentials[provider]) {
-      encrypted[provider] = safeStorage.encryptString(credentials[provider]).toString('base64');
-    }
-  }
-  const temporaryFile = `${providerCredentialsFile}.tmp`;
-  fs.writeFileSync(temporaryFile, JSON.stringify(encrypted), { mode: 0o600 });
-  fs.renameSync(temporaryFile, providerCredentialsFile);
+function sendToUi(channel, payload) {
+  if (!uiAlive() || window.webContents.isDestroyed()) return;
+  window.webContents.send(channel, payload);
 }
 
-function readBrowserSettings() {
-  let saved;
-  try {
-    saved = JSON.parse(fs.readFileSync(browserSettingsFile, 'utf8'));
-  } catch (error) {
-    if (error.code === 'ENOENT') return;
-    console.warn('[Nova Browser] Could not read browser settings; using defaults.', error.message);
+function notifyLibrary(kind) {
+  if (kind !== 'history') {
+    sendToUi('library:changed', kind);
     return;
   }
-  if (!saved || typeof saved !== 'object' || Array.isArray(saved)) {
-    console.warn('[Nova Browser] Browser settings have an invalid format; using defaults.');
-    return;
-  }
-  browserSettings.restoreSession = saved.restoreSession === true;
-  browserSettings.tabs = [];
-  if (Array.isArray(saved.tabs)) {
-    for (const tab of saved.tabs.slice(0, 50)) {
-      if (!tab || typeof tab !== 'object' || Array.isArray(tab)) continue;
-      if (tab.url === null) {
-        browserSettings.tabs.push({ url: null, pinned: tab.pinned === true });
-        continue;
-      }
-      if (typeof tab.url !== 'string') continue;
-      const url = normalizeBrowserAddress(tab.url);
-      if (url) browserSettings.tabs.push({ url, pinned: tab.pinned === true });
-    }
-  }
-  browserSettings.activeTabIndex = Number.isInteger(saved.activeTabIndex)
-    ? Math.max(0, Math.min(saved.activeTabIndex, Math.max(0, browserSettings.tabs.length - 1)))
-    : 0;
+  if (libraryTimer) return;
+  libraryTimer = setTimeout(() => {
+    libraryTimer = null;
+    sendToUi('library:changed', 'history');
+  }, 300);
 }
 
-function writeBrowserSettings() {
-  fs.mkdirSync(path.dirname(browserSettingsFile), { recursive: true });
-  const temporaryFile = `${browserSettingsFile}.tmp`;
-  fs.writeFileSync(temporaryFile, JSON.stringify(browserSettings, null, 2), { mode: 0o600 });
-  fs.renameSync(temporaryFile, browserSettingsFile);
+function orderedTabs() {
+  return order.map((id) => tabs.get(id)).filter(Boolean);
 }
 
-function persistBrowserSession() {
-  if (tabs.size) {
-    browserSettings.tabs = browserSettings.restoreSession
-      ? [...tabs.values()].map(tab => ({ url: tab.isHome ? null : normalizeBrowserAddress(tab.url), pinned: tab.pinned }))
-      : [];
-    browserSettings.activeTabIndex = Math.max(0, [...tabs.keys()].indexOf(activeTabId));
-  } else if (!browserSettings.restoreSession) {
-    browserSettings.tabs = [];
+function activeTab() {
+  return tabs.get(activeTabId);
+}
+
+function isTabContents(contents) {
+  for (const tab of tabs.values()) {
+    if (tab.view.webContents === contents) return true;
   }
-  try {
-    writeBrowserSettings();
-  } catch (error) {
-    console.error('[Nova Browser] Could not save browser settings.', error);
-  }
+  return false;
 }
 
 function publicTab(tab) {
+  const contents = tab.view.webContents;
+  const alive = !contents.isDestroyed();
   return {
     id: tab.id,
     title: tab.title,
     url: tab.url,
-    loading: tab.loading,
     favicon: tab.favicon,
+    loading: tab.loading,
     pinned: tab.pinned,
-    audible: tab.audible,
-    muted: tab.muted,
-    canGoBack: tab.view.webContents.navigationHistory.canGoBack(),
-    canGoForward: tab.view.webContents.navigationHistory.canGoForward(),
+    bookmarked: Boolean(library && tab.url && library.isBookmarked(tab.url)),
+    canGoBack: alive && contents.navigationHistory.canGoBack(),
+    canGoForward: alive && contents.navigationHistory.canGoForward(),
     isHome: tab.isHome
   };
 }
 
+function publicState() {
+  return { activeTabId, tabs: orderedTabs().map(publicTab) };
+}
+
 function sendState() {
-  if (!window || window.isDestroyed()) return;
-  window.webContents.send('browser:state', {
-    activeTabId,
-    tabs: [...tabs.values()].map(publicTab)
-  });
+  if (!uiAlive()) return;
+  sendToUi('browser:state', publicState());
+  const tab = activeTab();
+  window.setTitle(tab && !tab.isHome && tab.title ? `${tab.title} — Nova Browser` : 'Nova Browser');
+}
+
+function clampInset(value, max) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return 0;
+  return Math.max(0, Math.min(Math.max(0, max), Math.round(number)));
 }
 
 function updateViewBounds() {
-  if (!window || window.isDestroyed()) return;
+  if (!uiAlive()) return;
   const { width, height } = window.getContentBounds();
+  const x = Math.min(layout.left, width);
+  const y = Math.min(layout.top, height);
+  const bounds = {
+    x,
+    y,
+    width: Math.max(0, width - layout.left - layout.right),
+    height: Math.max(0, height - layout.top - layout.bottom)
+  };
   for (const tab of tabs.values()) {
-    tab.view.setBounds({
-      x: 0,
-      y: Math.min(chromeHeight, height),
-      width,
-      height: Math.max(0, height - chromeHeight)
-    });
-    tab.view.setVisible(tab.id === activeTabId && !tab.isHome);
+    tab.view.setBounds(bounds);
+    tab.view.setVisible(tab.id === activeTabId && !tab.isHome && !overlayOpen);
   }
+}
+
+async function setOverlay(open) {
+  if (open === overlayOpen) return;
+  overlayOpen = open;
+  if (open) {
+    const tab = activeTab();
+    if (tab && !tab.isHome && !tab.view.webContents.isDestroyed()) {
+      try {
+        const image = await Promise.race([
+          tab.view.webContents.capturePage(),
+          new Promise((_resolve, reject) =>
+            setTimeout(() => reject(new Error('snapshot timeout')), SNAPSHOT_TIMEOUT_MS)
+          )
+        ]);
+        if (overlayOpen && image && !image.isEmpty()) {
+          sendToUi('browser:snapshot', {
+            dataUrl: `data:image/jpeg;base64,${image.toJPEG(80).toString('base64')}`
+          });
+        }
+      } catch (error) {
+        console.warn('[Nova Browser] Could not capture the page behind the menu:', error.message);
+      }
+    }
+  } else {
+    sendToUi('browser:snapshot', null);
+  }
+  updateViewBounds();
 }
 
 function emitNavigationError(tab, url, error) {
@@ -178,39 +155,35 @@ function emitNavigationError(tab, url, error) {
   tab.loading = false;
   tab.isHome = true;
   tab.title = 'New tab';
-  console.warn(`[Nova Browser] Navigation failed (${error?.code || 'unknown'}).`);
+  console.warn(`[Nova Browser] Navigation failed for ${url}:`, error);
   updateViewBounds();
   sendState();
-  if (tab.id !== activeTabId || !window || window.isDestroyed()) return;
-  window.webContents.send('browser:navigation-error');
+  if (tab.id !== activeTabId) return;
+  sendToUi('browser:navigation-error', { tabId: tab.id, url, message: NAVIGATION_ERROR_MESSAGE });
 }
 
-function reorderTabs(tabId, requestedIndex) {
-  const ordered = [...tabs.entries()];
-  const currentIndex = ordered.findIndex(([id]) => id === String(tabId));
-  if (currentIndex < 0 || !Number.isInteger(requestedIndex)) return false;
-  const [entry] = ordered.splice(currentIndex, 1);
-  const pinnedCount = ordered.filter(([, tab]) => tab.pinned).length;
-  const tab = entry[1];
-  const minIndex = tab.pinned ? 0 : pinnedCount;
-  const maxIndex = tab.pinned ? Math.max(0, pinnedCount - 1) : ordered.length;
-  const targetIndex = Math.max(minIndex, Math.min(maxIndex, requestedIndex));
-  ordered.splice(targetIndex, 0, entry);
-  tabs.clear();
-  for (const [id, value] of ordered) tabs.set(id, value);
-  sendState();
-  return true;
+function pickFavicon(favicons) {
+  if (!Array.isArray(favicons)) return '';
+  return (
+    favicons.find(
+      (icon) => typeof icon === 'string' && icon.length <= 2048 && icon.startsWith('https://')
+    ) || ''
+  );
 }
 
-function activateAdjacentTab(direction) {
-  const ids = [...tabs.keys()];
-  if (ids.length < 2) return false;
-  const current = ids.indexOf(activeTabId);
-  const next = (current + direction + ids.length) % ids.length;
-  return activateTab(ids[next]);
+function sameOrigin(a, b) {
+  try {
+    return new URL(a).origin === new URL(b).origin;
+  } catch {
+    return false;
+  }
 }
 
-function createTab(initialUrl = null, { pinned = false } = {}) {
+function sortPinnedFirst() {
+  order.sort((a, b) => Number(tabs.get(b).pinned) - Number(tabs.get(a).pinned));
+}
+
+function createTab(initialUrl = null, { afterId = null } = {}) {
   const id = String(nextTabId++);
   const view = new WebContentsView({
     webPreferences: {
@@ -221,61 +194,45 @@ function createTab(initialUrl = null, { pinned = false } = {}) {
       allowRunningInsecureContent: false
     }
   });
-  const tab = { id, view, title: 'New tab', url: '', loading: false, isHome: true, pinned, favicon: null, audible: false, muted: false };
+  const tab = {
+    id,
+    view,
+    title: 'New tab',
+    url: '',
+    favicon: '',
+    loading: false,
+    isHome: true,
+    pinned: false
+  };
   tabs.set(id, tab);
+  const position = afterId ? order.indexOf(afterId) : -1;
+  if (position >= 0) order.splice(position + 1, 0, id);
+  else order.push(id);
+  sortPinnedFirst();
   window.contentView.addChildView(view);
 
   const contents = view.webContents;
   contents.setWindowOpenHandler(({ url }) => {
     const safeUrl = normalizeBrowserAddress(url);
-    if (safeUrl) createTab(safeUrl);
+    if (safeUrl) createTab(safeUrl, { afterId: id });
     return { action: 'deny' };
   });
   contents.on('will-navigate', (event, url) => {
     if (!normalizeBrowserAddress(url)) event.preventDefault();
   });
+  contents.on('will-redirect', (event, url) => {
+    if (!normalizeBrowserAddress(url)) event.preventDefault();
+  });
   contents.on('before-input-event', (event, input) => {
-    if (input.type !== 'keyDown') return;
-    const key = input.key.toLowerCase();
-    const command = input.control || input.meta;
-    if (command && key === 'l') {
-      event.preventDefault();
-      if (window && !window.isDestroyed()) window.webContents.send('browser:focus-address');
-    } else if (command && key === 't') {
-      if (input.shift) {
-        event.preventDefault();
-        reopenClosedTab();
-      } else {
-        event.preventDefault();
-        createTab();
-      }
-    } else if (command && key === 'w') {
-      event.preventDefault();
-      closeTab(tab.id);
-    } else if (command && key === 'r') {
-      event.preventDefault();
-      if (contents.isLoading()) contents.stop();
-      else contents.reload();
-    } else if (command && key === 'f') {
-      event.preventDefault();
-      if (window && !window.isDestroyed()) window.webContents.send('browser:open-find');
-    } else if (command && key === 'tab') {
-      event.preventDefault();
-      activateAdjacentTab(input.shift ? -1 : 1);
-    } else if (input.key === 'F11') {
-      event.preventDefault();
-      if (window && !window.isDestroyed()) window.setFullScreen(!window.isFullScreen());
-    } else if (input.alt && key === 'arrowleft' && contents.navigationHistory.canGoBack()) {
-      event.preventDefault();
-      contents.navigationHistory.goBack();
-    } else if (input.alt && key === 'arrowright' && contents.navigationHistory.canGoForward()) {
-      event.preventDefault();
-      contents.navigationHistory.goForward();
-    }
+    if (input.type !== 'keyDown' || !shortcuts) return;
+    const command = shortcuts.matchShortcut(shortcuts.fromElectronInput(input));
+    if (!command || PAGE_IGNORED_COMMANDS.has(command)) return;
+    event.preventDefault();
+    sendToUi('browser:command', command);
   });
   contents.on('found-in-page', (_event, result) => {
-    if (tab.id === activeTabId && window && !window.isDestroyed()) {
-      window.webContents.send('browser:find-result', {
+    if (tab.id === activeTabId) {
+      sendToUi('browser:find-result', {
         matches: result.matches,
         activeMatchOrdinal: result.activeMatchOrdinal
       });
@@ -283,7 +240,9 @@ function createTab(initialUrl = null, { pinned = false } = {}) {
   });
   contents.on('did-start-navigation', (_event, url, _inPlace, isMainFrame) => {
     if (!isMainFrame) return;
-    tab.url = normalizeBrowserAddress(url) || tab.url;
+    const next = normalizeBrowserAddress(url);
+    if (next && tab.url && !sameOrigin(next, tab.url)) tab.favicon = '';
+    tab.url = next || tab.url;
     tab.loading = true;
     tab.isHome = false;
     sendState();
@@ -293,6 +252,10 @@ function createTab(initialUrl = null, { pinned = false } = {}) {
     tab.title = contents.getTitle() || tab.url || 'New tab';
     tab.loading = false;
     tab.isHome = false;
+    if (tab.url && library) {
+      library.recordVisit(tab.url, tab.title);
+      notifyLibrary('history');
+    }
     sendState();
   });
   contents.on('did-navigate-in-page', (_event, url, isMainFrame) => {
@@ -303,22 +266,20 @@ function createTab(initialUrl = null, { pinned = false } = {}) {
   contents.on('page-title-updated', (event, title) => {
     event.preventDefault();
     tab.title = title || tab.url || 'New tab';
+    if (tab.url && title && library) library.updateTitle(tab.url, title);
     sendState();
   });
   contents.on('page-favicon-updated', (_event, favicons) => {
-    const candidate = favicons.find(icon => /^https?:\/\//i.test(icon) || icon.startsWith('data:image/'));
-    if (candidate) tab.favicon = candidate;
-    sendState();
-  });
-  contents.on('audio-state-changed', (_event, audible) => {
-    tab.audible = typeof audible === 'boolean' ? audible : contents.isCurrentlyAudible();
+    const icon = pickFavicon(favicons);
+    tab.favicon = icon;
+    if (icon && tab.url && library && library.setIcon(tab.url, icon)) notifyLibrary('bookmarks');
     sendState();
   });
   contents.on('did-stop-loading', () => {
     tab.loading = false;
     sendState();
   });
-  contents.on('did-fail-load', (event, code, description, url, isMainFrame) => {
+  contents.on('did-fail-load', (_event, code, description, url, isMainFrame) => {
     if (!isMainFrame || code === -3) return;
     tab.loading = false;
     sendState();
@@ -328,14 +289,8 @@ function createTab(initialUrl = null, { pinned = false } = {}) {
   activeTabId = id;
   updateViewBounds();
   sendState();
-  if (initialUrl) {
-    navigateTab(tab, initialUrl).catch(() => {});
-  }
+  if (initialUrl) navigateTab(tab, initialUrl).catch(() => {});
   return id;
-}
-
-function activeTab() {
-  return tabs.get(activeTabId);
 }
 
 function navigateTab(tab, input) {
@@ -346,7 +301,7 @@ function navigateTab(tab, input) {
   tab.loading = true;
   tab.url = url;
   sendState();
-  return tab.view.webContents.loadURL(url).catch(error => {
+  return tab.view.webContents.loadURL(url).catch((error) => {
     tab.loading = false;
     sendState();
     if (error.code === 'ERR_ABORTED' || error.errno === -3) return false;
@@ -356,8 +311,9 @@ function navigateTab(tab, input) {
 }
 
 function activateTab(id) {
-  if (!tabs.has(String(id))) return false;
-  activeTabId = String(id);
+  const key = String(id);
+  if (!tabs.has(key)) return false;
+  activeTabId = key;
   updateViewBounds();
   sendState();
   return true;
@@ -367,18 +323,20 @@ function closeTab(id, { remember = true } = {}) {
   const key = String(id);
   const tab = tabs.get(key);
   if (!tab) return false;
+  const index = order.indexOf(key);
   const wasActive = activeTabId === key;
-  if (remember && !tab.pinned) {
-    closedTabs.push({ url: tab.isHome ? null : tab.url });
-    if (closedTabs.length > 10) closedTabs.shift();
+  if (remember && tab.url && !tab.isHome) {
+    closedTabs.push({ url: tab.url, title: tab.title });
+    if (closedTabs.length > MAX_CLOSED_TABS) closedTabs.shift();
   }
   tabs.delete(key);
-  window.contentView.removeChildView(tab.view);
-  tab.view.webContents.close();
+  order = order.filter((value) => value !== key);
+  if (uiAlive()) window.contentView.removeChildView(tab.view);
+  if (!tab.view.webContents.isDestroyed()) tab.view.webContents.close();
   if (!tabs.size) {
-    createTab();
+    if (uiAlive()) createTab();
   } else if (wasActive) {
-    activeTabId = [...tabs.keys()].at(-1);
+    activeTabId = order[Math.min(index, order.length - 1)];
     updateViewBounds();
     sendState();
   } else {
@@ -387,79 +345,90 @@ function closeTab(id, { remember = true } = {}) {
   return true;
 }
 
+function closeOtherTabs(keepId) {
+  for (const tab of orderedTabs()) {
+    if (tab.id !== keepId && !tab.pinned) closeTab(tab.id);
+  }
+  activateTab(keepId);
+}
+
+function closeTabsToRight(id) {
+  const index = order.indexOf(id);
+  if (index < 0) return;
+  for (const key of order.slice(index + 1)) {
+    if (!tabs.get(key)?.pinned) closeTab(key);
+  }
+}
+
+function cycleTab(delta) {
+  if (order.length < 2) return false;
+  const index = order.indexOf(activeTabId);
+  const next = order[(index + delta + order.length) % order.length];
+  return activateTab(next);
+}
+
 function reopenClosedTab() {
-  const closed = closedTabs.pop();
-  if (!closed) return false;
-  createTab(closed.url);
+  const entry = closedTabs.pop();
+  if (!entry) return false;
+  createTab(entry.url);
   return true;
 }
 
-function duplicateTab(id) {
-  const source = tabs.get(String(id));
-  if (!source) return false;
-  createTab(source.isHome ? null : source.url);
+function setPinned(id, pinned) {
+  const tab = tabs.get(String(id));
+  if (!tab) return false;
+  tab.pinned = Boolean(pinned);
+  sortPinnedFirst();
+  sendState();
   return true;
 }
 
-function configureUpdater() {
-  if (updaterInitialized) return;
-  updaterInitialized = true;
-  let updateUrl = process.env.NOVA_UPDATE_URL?.trim();
-  if (!updateUrl && app.isPackaged) {
-    try {
-      const metadata = fs.readFileSync(path.join(process.resourcesPath, 'app-update.yml'), 'utf8');
-      updateUrl = metadata.match(/^url:\s*(.+)$/m)?.[1]?.trim();
-    } catch (error) {
-      if (error.code !== 'ENOENT') throw error;
-    }
-  }
-  if (!updateUrl) {
-    window?.webContents.send('updater:state', { state: 'not-configured' });
-    return;
-  }
-  let parsed;
-  try {
-    parsed = new URL(updateUrl);
-  } catch {
-    console.error('[Nova Browser] Update feed URL is invalid.');
-    return;
-  }
-  if (parsed.protocol !== 'https:' || parsed.username || parsed.password ||
-      parsed.hostname === 'example.com' || parsed.hostname.endsWith('.example.com') ||
-      parsed.hostname.includes('your-update-host')) {
-    console.error('[Nova Browser] Ignoring an invalid or unsafe update feed URL.');
-    return;
-  }
-  autoUpdater.setFeedURL({ provider: 'generic', url: parsed.toString() });
-  autoUpdater.autoDownload = false;
-  autoUpdater.autoInstallOnAppQuit = true;
-  updateFeedConfigured = true;
-  autoUpdater.on('checking-for-update', () => window?.webContents.send('updater:state', { state: 'checking' }));
-  autoUpdater.on('update-available', info => window?.webContents.send('updater:state', { state: 'available', version: info.version }));
-  autoUpdater.on('update-not-available', () => window?.webContents.send('updater:state', { state: 'up-to-date' }));
-  autoUpdater.on('download-progress', progress => window?.webContents.send('updater:state', {
-    state: 'downloading',
-    percent: Math.round(progress.percent)
-  }));
-  autoUpdater.on('update-downloaded', info => window?.webContents.send('updater:state', { state: 'downloaded', version: info.version }));
-  autoUpdater.on('error', error => {
-    console.error('[Nova Browser] Update check failed:', error.message);
-    window?.webContents.send('updater:state', { state: 'error' });
-  });
+function showTabMenu(id) {
+  const tab = tabs.get(String(id));
+  if (!tab || !uiAlive()) return false;
+  const index = order.indexOf(tab.id);
+  const template = [
+    { label: 'Reload tab', enabled: !tab.isHome, click: () => tab.view.webContents.reload() },
+    { label: tab.pinned ? 'Unpin tab' : 'Pin tab', click: () => setPinned(tab.id, !tab.pinned) },
+    {
+      label: 'Duplicate tab',
+      enabled: !tab.isHome && Boolean(tab.url),
+      click: () => createTab(tab.url, { afterId: tab.id })
+    },
+    { type: 'separator' },
+    { label: 'Close tab', click: () => closeTab(tab.id) },
+    { label: 'Close other tabs', enabled: tabs.size > 1, click: () => closeOtherTabs(tab.id) },
+    {
+      label: 'Close tabs to the right',
+      enabled: index < order.length - 1,
+      click: () => closeTabsToRight(tab.id)
+    },
+    { type: 'separator' },
+    { label: 'Reopen closed tab', enabled: closedTabs.length > 0, click: () => reopenClosedTab() }
+  ];
+  Menu.buildFromTemplate(template).popup({ window });
+  return true;
 }
 
-async function checkForUpdates() {
-  if (!updateFeedConfigured) return { state: 'not-configured' };
-  await autoUpdater.checkForUpdates();
-  return { state: 'checking' };
+function requireString(value, name, max = 2048) {
+  if (typeof value !== 'string' || !value || value.length > max)
+    throw new TypeError(`${name} is not valid.`);
+  return value;
 }
 
 function registerIpc() {
+  if (ipcRegistered) return;
+  ipcRegistered = true;
+
   ipcMain.handle('omni:search', async (event, query, searchId) => {
-    if (typeof query !== 'string' || query.length > 300) throw new TypeError('Search query must be at most 300 characters.');
+    if (typeof query !== 'string' || query.length > 300)
+      throw new TypeError('Search query must be at most 300 characters.');
     if (!engine.providerNames().length && !engine.indexStats().documents) {
-      throw new Error(`No search provider or local index is configured. Add a provider key to ${configFile} and restart Nova Browser.`);
+      throw new Error(
+        `No search provider or local index is configured. Add a provider key to ${configFile} and restart Nova Browser.`
+      );
     }
+    if (query.trim() && library) library.addSearch(query);
     if (Number.isSafeInteger(searchId) && !event.sender.isDestroyed()) {
       event.sender.send('omni:search-progress', {
         searchId,
@@ -469,22 +438,24 @@ function registerIpc() {
       });
     }
     const onProvider = Number.isSafeInteger(searchId)
-      ? progress => {
-        if (!progress.provider.ok && !progress.provider.skipped) {
-          console.warn(`[Nova Browser] Search source ${progress.provider.name} failed: ${progress.provider.error}`);
+      ? (progress) => {
+          if (!progress.provider.ok && !progress.provider.skipped) {
+            console.warn(
+              `[Nova Browser] Search source ${progress.provider.name} failed: ${progress.provider.error}`
+            );
+          }
+          if (!event.sender.isDestroyed()) {
+            event.sender.send('omni:search-progress', {
+              searchId,
+              stage: 'provider',
+              provider: progress.provider.name,
+              resultCount: progress.provider.count,
+              ok: progress.provider.ok,
+              skipped: progress.provider.skipped,
+              results: progress.results
+            });
+          }
         }
-        if (!event.sender.isDestroyed()) {
-          event.sender.send('omni:search-progress', {
-            searchId,
-            stage: 'provider',
-            provider: progress.provider.name,
-            resultCount: progress.provider.count,
-            ok: progress.provider.ok,
-            skipped: progress.provider.skipped,
-            results: progress.results
-          });
-        }
-      }
       : undefined;
     return engine.search(query, { limit: 12, onProvider });
   });
@@ -493,92 +464,35 @@ function registerIpc() {
       throw new TypeError('Enter a topic between 2 and 300 characters.');
     }
     if (!queryGenerator) {
-      throw new Error(`AI query generation is not configured. Add GEMINI_API_KEY to ${configFile} and restart Nova Browser.`);
+      throw new Error(
+        `AI query generation is not configured. Add GEMINI_API_KEY to ${configFile} and restart Nova Browser.`
+      );
     }
     return queryGenerator.classifyAndExpand(query.trim(), { count: 5 });
   });
   ipcMain.handle('omni:get-search-status', () => ({
     providers: engine.providerNames(),
-    providerAvailability: {
-      serper: Boolean(config.keys.serper),
-      serpapi: Boolean(config.keys.serpapi),
-      exa: Boolean(config.keys.exa),
-      searxng: Boolean(config.searxngEnabled && config.searxngInstances.length),
-      firecrawl: Boolean(config.keys.firecrawl)
-    },
     indexDocuments: engine.indexStats().documents || 0,
     aiConfigured: Boolean(queryGenerator)
   }));
-  ipcMain.handle('omni:save-provider-credentials', (_event, input) => {
-    if (!input || typeof input !== 'object' || Array.isArray(input)) {
-      throw new TypeError('Provider settings are invalid.');
-    }
-    const credentials = readProviderCredentials();
-    for (const provider of credentialProviders) {
-      const value = input[provider];
-      if (value === undefined || value === '') continue;
-      if (typeof value !== 'string' || value.length > 4096 || /[\r\n]/.test(value)) {
-        throw new TypeError(`The ${provider} key must be a single line no longer than 4096 characters.`);
-      }
-      credentials[provider] = value.trim();
-      if (!credentials[provider]) delete credentials[provider];
-    }
-    const clear = input.clear;
-    if (clear !== undefined && (!Array.isArray(clear) || clear.some(name => !credentialProviders.includes(name)))) {
-      throw new TypeError('Provider clear settings are invalid.');
-    }
-    for (const provider of clear || []) delete credentials[provider];
-    writeProviderCredentials(credentials);
-    return { saved: true, restartRequired: true };
+
+  ipcMain.handle('browser:get-state', () => publicState());
+  ipcMain.handle('browser:new-tab', (_event, url) => {
+    if (url === undefined || url === null || url === '') return createTab();
+    const safeUrl = normalizeBrowserAddress(url);
+    if (!safeUrl) throw new TypeError('Enter a valid HTTP or HTTPS address.');
+    return createTab(safeUrl);
   });
-  ipcMain.handle('browser:restart', () => {
-    app.relaunch();
-    app.quit();
-    return true;
+  ipcMain.handle('browser:close-tab', (_event, id) => closeTab(requireString(id, 'Tab id', 40)));
+  ipcMain.handle('browser:activate-tab', (_event, id) =>
+    activateTab(requireString(id, 'Tab id', 40))
+  );
+  ipcMain.handle('browser:cycle-tab', (_event, delta) => {
+    if (delta !== 1 && delta !== -1) throw new TypeError('Tab direction is not valid.');
+    return cycleTab(delta);
   });
-  ipcMain.handle('browser:get-state', () => ({
-    activeTabId,
-    tabs: [...tabs.values()].map(publicTab)
-  }));
-  ipcMain.handle('browser:get-preferences', () => ({ restoreSession: browserSettings.restoreSession }));
-  ipcMain.handle('browser:set-preferences', (_event, preferences) => {
-    if (!preferences || typeof preferences !== 'object' || typeof preferences.restoreSession !== 'boolean') {
-      throw new TypeError('Browser preferences are invalid.');
-    }
-    browserSettings.restoreSession = preferences.restoreSession;
-    if (tabs.size) {
-      browserSettings.tabs = browserSettings.restoreSession
-        ? [...tabs.values()].map(tab => ({ url: tab.isHome ? null : normalizeBrowserAddress(tab.url), pinned: tab.pinned }))
-        : [];
-      browserSettings.activeTabIndex = Math.max(0, [...tabs.keys()].indexOf(activeTabId));
-    } else if (!browserSettings.restoreSession) {
-      browserSettings.tabs = [];
-    }
-    writeBrowserSettings();
-    return { restoreSession: browserSettings.restoreSession };
-  });
-  ipcMain.handle('browser:new-tab', () => createTab());
-  ipcMain.handle('browser:close-tab', (_event, id) => closeTab(id));
-  ipcMain.handle('browser:activate-tab', (_event, id) => activateTab(id));
-  ipcMain.handle('browser:duplicate-tab', (_event, id) => duplicateTab(id));
-  ipcMain.handle('browser:reopen-closed-tab', () => reopenClosedTab());
-  ipcMain.handle('browser:move-tab', (_event, id, index) => reorderTabs(id, index));
-  ipcMain.handle('browser:pin-tab', (_event, id) => {
-    const tab = tabs.get(String(id));
-    if (!tab) return false;
-    tab.pinned = !tab.pinned;
-    reorderTabs(id, tab.pinned ? 0 : tabs.size - 1);
-    sendState();
-    return true;
-  });
-  ipcMain.handle('browser:mute-tab', (_event, id) => {
-    const tab = tabs.get(String(id));
-    if (!tab) return false;
-    tab.muted = !tab.muted;
-    tab.view.webContents.setAudioMuted(tab.muted);
-    sendState();
-    return tab.muted;
-  });
+  ipcMain.handle('browser:reopen-tab', () => reopenClosedTab());
+  ipcMain.handle('browser:tab-menu', (_event, id) => showTabMenu(requireString(id, 'Tab id', 40)));
   ipcMain.handle('browser:navigate', (_event, address) => {
     const tab = activeTab();
     if (!tab) throw new Error('No active browser tab.');
@@ -593,10 +507,11 @@ function registerIpc() {
     else return false;
     return true;
   });
-  ipcMain.handle('browser:reload', () => {
+  ipcMain.handle('browser:reload', (_event, hard) => {
     const contents = activeTab()?.view.webContents;
     if (!contents) return false;
     if (contents.isLoading()) contents.stop();
+    else if (hard === true) contents.reloadIgnoringCache();
     else contents.reload();
     return true;
   });
@@ -608,6 +523,7 @@ function registerIpc() {
     tab.loading = false;
     tab.title = 'New tab';
     tab.url = '';
+    tab.favicon = '';
     updateViewBounds();
     sendState();
     return true;
@@ -616,18 +532,20 @@ function registerIpc() {
     const contents = activeTab()?.view.webContents;
     if (!contents) return 100;
     const current = contents.getZoomFactor();
-    const next = action === 'in'
-      ? Math.min(2, Math.round((current + 0.1) * 10) / 10)
-      : action === 'out'
-        ? Math.max(0.5, Math.round((current - 0.1) * 10) / 10)
-        : action === 'reset'
-          ? 1
-          : null;
+    if (action === 'get') return Math.round(current * 100);
+    const next =
+      action === 'in'
+        ? Math.min(2, Math.round((current + 0.1) * 10) / 10)
+        : action === 'out'
+          ? Math.max(0.5, Math.round((current - 0.1) * 10) / 10)
+          : action === 'reset'
+            ? 1
+            : null;
     if (next === null) throw new TypeError('Unsupported zoom action.');
     contents.setZoomFactor(next);
     return Math.round(next * 100);
   });
-  ipcMain.handle('browser:find-in-page', (_event, query, direction) => {
+  ipcMain.handle('browser:find-in-page', (_event, query, options) => {
     const contents = activeTab()?.view.webContents;
     if (!contents) return null;
     const value = typeof query === 'string' ? query.slice(0, 300) : '';
@@ -635,7 +553,10 @@ function registerIpc() {
       contents.stopFindInPage('clearSelection');
       return null;
     }
-    return contents.findInPage(value, { forward: direction !== 'backward' });
+    return contents.findInPage(value, {
+      forward: options?.forward !== false,
+      findNext: options?.findNext === true
+    });
   });
   ipcMain.handle('browser:stop-find-in-page', () => {
     const contents = activeTab()?.view.webContents;
@@ -644,7 +565,7 @@ function registerIpc() {
     return true;
   });
   ipcMain.handle('browser:toggle-fullscreen', () => {
-    if (!window || window.isDestroyed()) return false;
+    if (!uiAlive()) return false;
     window.setFullScreen(!window.isFullScreen());
     return window.isFullScreen();
   });
@@ -652,30 +573,115 @@ function registerIpc() {
     app.quit();
     return true;
   });
-  ipcMain.on('browser:chrome-height', (_event, height) => {
-    if (!Number.isFinite(height)) return;
-    chromeHeight = Math.max(72, Math.min(620, Math.round(height)));
+  ipcMain.on('browser:layout', (event, insets) => {
+    if (!uiAlive() || event.sender !== window.webContents || !insets || typeof insets !== 'object')
+      return;
+    const { width, height } = window.getContentBounds();
+    layout = {
+      top: clampInset(insets.top, height),
+      left: clampInset(insets.left, width),
+      right: clampInset(insets.right, width),
+      bottom: clampInset(insets.bottom, height)
+    };
     updateViewBounds();
   });
-  ipcMain.handle('updater:check', () => checkForUpdates());
-  ipcMain.handle('updater:download', async () => {
-    if (!updateFeedConfigured) throw new Error('Updates are not configured for this build.');
-    await autoUpdater.downloadUpdate();
-    return { ok: true };
+  ipcMain.handle('browser:overlay', (event, open) => {
+    if (!uiAlive() || event.sender !== window.webContents) return false;
+    return setOverlay(open === true).then(() => true);
   });
-  ipcMain.handle('updater:install', () => {
-    autoUpdater.quitAndInstall(false, true);
-    return { ok: true };
+
+  ipcMain.handle('library:bookmarks', () => library.bookmarks());
+  ipcMain.handle('library:toggle-bookmark', () => {
+    const tab = activeTab();
+    if (!tab || tab.isHome || !tab.url) throw new Error('Open a web page first.');
+    const result = library.toggleBookmark(tab.url, tab.title);
+    sendState();
+    notifyLibrary('bookmarks');
+    return { bookmarked: result.bookmarked };
   });
+  ipcMain.handle('library:remove-bookmark', (_event, id) => {
+    const removed = library.removeBookmark(requireString(id, 'Bookmark id'));
+    if (removed) {
+      sendState();
+      notifyLibrary('bookmarks');
+    }
+    return removed;
+  });
+  ipcMain.handle('library:history', (_event, options) =>
+    library.history({
+      query: typeof options?.query === 'string' ? options.query.slice(0, 200) : '',
+      limit: Number(options?.limit) || 200
+    })
+  );
+  ipcMain.handle('library:remove-history', (_event, url) => {
+    const removed = library.removeHistory(requireString(url, 'Address'));
+    if (removed) notifyLibrary('history');
+    return removed;
+  });
+  ipcMain.handle('library:clear-history', () => {
+    const count = library.clearHistory();
+    notifyLibrary('all');
+    return count;
+  });
+  ipcMain.handle('library:top-sites', (_event, limit) => library.topSites(Number(limit) || 8));
+  ipcMain.handle('library:suggest', (_event, query) =>
+    typeof query === 'string' ? library.suggest(query.slice(0, 200), 8) : []
+  );
+
+  ipcMain.handle('permission:respond', (_event, id, allow) =>
+    permissions.respond(requireString(id, 'Request id', 40), allow === true)
+  );
+}
+
+function setupPermissions() {
+  permissions = createPermissionPolicy({
+    isKnownContents: (contents) => isTabContents(contents),
+    ask: (request) => sendToUi('permission:request', request)
+  });
+  const ses = session.defaultSession;
+  ses.setPermissionRequestHandler((contents, permission, callback, details) => {
+    permissions.onRequest(contents, permission, callback, details);
+  });
+  ses.setPermissionCheckHandler((contents, permission, requestingOrigin) =>
+    permissions.onCheck(contents, permission, requestingOrigin)
+  );
+}
+
+async function createMainWindow(root) {
+  window = new BrowserWindow({
+    width: 1360,
+    height: 900,
+    minWidth: 760,
+    minHeight: 560,
+    backgroundColor: '#1c1b22',
+    title: 'Nova Browser',
+    webPreferences: {
+      preload: path.join(root, 'desktop/preload.cjs'),
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: true,
+      webSecurity: true
+    }
+  });
+  window.removeMenu();
+  window.on('resize', updateViewBounds);
+  window.on('enter-full-screen', updateViewBounds);
+  window.on('leave-full-screen', updateViewBounds);
+  window.on('closed', () => {
+    permissions?.denyAll();
+    window = null;
+    tabs.clear();
+    order = [];
+    activeTabId = null;
+    overlayOpen = false;
+  });
+  await window.loadFile(path.join(root, 'desktop/index.html'));
+  createTab();
 }
 
 async function initialize() {
-  if (engineServer?.listening) {
-    await createBrowserWindow();
-    return;
-  }
   const root = app.getAppPath();
-  const importFromRoot = file => import(pathToFileURL(path.join(root, file)).href);
+  const importFromRoot = (file) => import(pathToFileURL(path.join(root, file)).href);
   const { loadConfig, loadEnvFile } = await importFromRoot('src/config.js');
   const { createSearchEngine } = await importFromRoot('src/search.js');
   const { DocumentStore } = await importFromRoot('src/index/store.js');
@@ -683,25 +689,17 @@ async function initialize() {
   const { AICache } = await importFromRoot('src/ai/cache.js');
   const { QueryCorpus } = await importFromRoot('src/queries/corpus.js');
   const { createQueryGenerator } = await importFromRoot('src/queries/generator.js');
-
+  shortcuts = await importFromRoot('desktop/shortcuts.js');
   const userDataPath = app.getPath('userData');
-  readBrowserSettings();
   configFile = path.join(app.isPackaged ? userDataPath : root, '.env');
   loadEnvFile(configFile);
-  config = loadConfig();
-  const storedCredentials = readProviderCredentials();
-  for (const provider of credentialProviders) {
-    if (!config.keys[provider] && storedCredentials[provider]) config.keys[provider] = storedCredentials[provider];
-  }
-  const dataPath = path.join(userDataPath, 'data');
-  fs.mkdirSync(dataPath, { recursive: true });
-  if (!process.env.OMNI_INDEX_FILE) config.indexFile = path.join(dataPath, 'omni-index.json');
-  if (!process.env.OMNI_QUERY_CORPUS_FILE) config.ai.corpusFile = path.join(dataPath, 'query-corpus.json');
-  if (!process.env.GEMINI_CACHE_FILE) config.ai.cacheFile = path.join(dataPath, 'gemini-query-cache.json');
-  if (!process.env.OMNI_CRAWL_FRONTIER_FILE) config.crawler.frontierFile = path.join(dataPath, 'crawl-frontier.json');
-  config.server.host = '127.0.0.1';
-  config.frontierFile = path.join(dataPath, 'crawl-frontier.json');
-  const store = new DocumentStore(config.indexFile);
+  const config = loadConfig();
+  if (!process.env.OMNI_INDEX_FILE) config.indexFile = path.join(userDataPath, 'omni-index.json');
+  if (!process.env.OMNI_QUERY_CORPUS_FILE)
+    config.ai.corpusFile = path.join(userDataPath, 'query-corpus.json');
+  if (!process.env.GEMINI_CACHE_FILE)
+    config.ai.cacheFile = path.join(userDataPath, 'gemini-query-cache.json');
+  store = new DocumentStore(config.indexFile);
   await store.init();
   const corpus = new QueryCorpus(config.ai.corpusFile);
   await corpus.init();
@@ -714,88 +712,45 @@ async function initialize() {
     queryGenerator = createQueryGenerator(createGeminiClient(config, { cache: aiCache }), corpus);
   }
   engine = createSearchEngine(config, { store });
-  const serverModule = await importFromRoot('src/server.js');
-  engineServer = serverModule.createServer(engine, config, { queryCorpus: corpus, queryGenerator });
-  await new Promise((resolve, reject) => {
-    const onError = error => reject(error);
-    engineServer.once('error', onError);
-    engineServer.listen(config.server.port, config.server.host, () => {
-      engineServer.removeListener('error', onError);
-      resolve();
-    });
-  });
+  library = new Library(path.join(userDataPath, 'library.json'));
+  await library.init();
+  setupPermissions();
   registerIpc();
-  configureUpdater();
-  await createBrowserWindow();
+  await createMainWindow(root);
 }
 
-async function createBrowserWindow() {
-  if (window && !window.isDestroyed()) return;
-  const root = app.getAppPath();
-  window = new BrowserWindow({
-    width: 1360,
-    height: 900,
-    minWidth: 760,
-    minHeight: 560,
-    backgroundColor: '#202124',
-    title: 'Nova Browser',
-    webPreferences: {
-      preload: path.join(root, 'desktop', 'preload.cjs'),
-      nodeIntegration: false,
-      contextIsolation: true,
-      sandbox: true,
-      webSecurity: true
-    }
+app
+  .whenReady()
+  .then(initialize)
+  .catch((error) => {
+    console.error('Nova Browser startup failed:', error);
+    dialog.showErrorBox(
+      'Nova Browser',
+      'We hit a small snag. Please give us a moment, then try again.'
+    );
+    app.quit();
   });
-  window.removeMenu();
-  session.defaultSession.setPermissionRequestHandler((_webContents, permission, callback) => {
-    callback(permission === 'fullscreen');
-  });
-  session.defaultSession.setPermissionCheckHandler((_webContents, permission) => permission === 'fullscreen');
-  window.webContents.setWindowOpenHandler(({ url }) => {
-    if (/^https?:\/\//i.test(url)) shell.openExternal(url).catch(error => console.error('[Nova Browser] Could not open external link:', error.message));
-    return { action: 'deny' };
-  });
-  const { port } = engineServer.address();
-  const appUrl = `http://127.0.0.1:${port}/browser`;
-  window.webContents.on('will-navigate', (event, url) => {
-    if (url !== appUrl && !url.startsWith(`${appUrl}/`)) {
-      event.preventDefault();
-      if (/^https?:\/\//i.test(url)) shell.openExternal(url).catch(error => console.error('[Nova Browser] Could not open external link:', error.message));
-    }
-  });
-  await window.loadURL(appUrl);
-  if (!updateFeedConfigured) window.webContents.send('updater:state', { state: 'not-configured' });
-  if (browserSettings.restoreSession && browserSettings.tabs.length) {
-    const restoredIds = browserSettings.tabs.map(tab => createTab(tab.url, { pinned: tab.pinned }));
-    activateTab(restoredIds[browserSettings.activeTabIndex] || restoredIds[0]);
-  } else {
-    createTab();
-  }
-  window.on('resize', updateViewBounds);
-  window.on('close', persistBrowserSession);
-  window.on('closed', () => {
-    window = null;
-    tabs.clear();
-    activeTabId = null;
-  });
-}
-
-app.whenReady().then(initialize).catch(error => {
-  console.error('Nova Browser startup failed:', error);
-  dialog.showErrorBox('Nova Browser', 'We hit a small snag. Please give us a moment, then try again.');
-  app.quit();
-});
 
 app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) initialize();
+  if (BrowserWindow.getAllWindows().length === 0 && engine) {
+    createMainWindow(app.getAppPath()).catch((error) =>
+      console.error('Nova Browser could not reopen its window:', error)
+    );
+  }
+});
+
+app.on('before-quit', (event) => {
+  if (quitting || !library) return;
+  quitting = true;
+  event.preventDefault();
+  library
+    .flush()
+    .catch((error) =>
+      console.warn('[Nova Browser] Could not save bookmarks and history:', error.message)
+    )
+    .finally(() => app.quit());
 });
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
-});
-
-app.on('before-quit', () => {
-  persistBrowserSession();
-  if (engineServer?.listening) engineServer.close();
 });

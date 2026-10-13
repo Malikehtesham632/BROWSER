@@ -3,9 +3,9 @@
 !.env.example
 node_modules/
 __pycache__/
-dist/
 release/
-installer-output-v*/
-
-data/query-corpus.json
-data/query-corpus.json.tmp
+dist/
+*.log
+*.tmp
+data/
+reports/

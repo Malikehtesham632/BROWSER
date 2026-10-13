@@ -5,7 +5,11 @@ function normalizeBrowserAddress(input) {
   let candidate = value;
   if (!/^https?:\/\//i.test(candidate)) {
     if (/^[a-z][a-z\d+.-]*:\/\//i.test(candidate)) return null;
-    if (!/^(?:localhost|(?:\[[\da-f:]+\])|(?:\d{1,3}\.){3}\d{1,3}|(?:[\w-]+\.)+[\w-]+)(?::\d+)?(?:[/?#]|$)/i.test(candidate)) {
+    if (
+      !/^(?:localhost|(?:\[[\da-f:]+\])|(?:\d{1,3}\.){3}\d{1,3}|(?:[\w-]+\.)+[\w-]+)(?::\d+)?(?:[/?#]|$)/i.test(
+        candidate
+      )
+    ) {
       return null;
     }
     candidate = `https://${candidate}`;

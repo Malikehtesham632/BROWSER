@@ -14,10 +14,21 @@ Everything Copilot added (desktop browser, installer, provider tests, hash and c
 8: Server: refuses to start on a public HOST without OMNI_API_TOKEN.
 9: Small things: weak-category sort order, dead code, unused variables, `.gitignore`, README inconsistencies, `npm run format`.
 
+## Nova Browser (desktop) redesign
+
+1: Firefox-style interface: tabs, one address bar with suggestions, bookmark star, bookmarks bar, Bookmarks and History sidebars, bottom find bar, application menu, Shortcuts tiles, dark, light and system themes.
+2: New search animation: a radar with one node per source, data packets, a live page counter, domain chips, four real steps and a progress bar. Replaces the old small "Finding the right pages.." text.
+3: Bookmarks, history, top sites and past searches, saved safely in `library.json`. The file is cleaned when loaded, and a damaged file is set aside so the browser still starts.
+4: Permission prompts for location, notifications and camera or microphone. Everything else is blocked. Before this, Electron approved every request.
+5: Pages can no longer be redirected to non-web addresses (`will-redirect` is checked as well as `will-navigate`).
+6: Menus and suggestions now float over the page (the page is captured and hidden while they are open) instead of pushing it down.
+7: Fixes: the `activate` handler could register the IPC handlers twice, and Escape now stops loading.
+8: The window layout is sent as exact insets, so the sidebar, find bar and notices resize the page view correctly.
+
 ## Still open
 
 1: Crawler SSRF: redirects are followed without checking each hop, and a name like `127.0.0.1.nip.io` passes the public-address check.
 2: The link graph is stored but not used in ranking.
 3: The index is one JSON file in memory (fine for thousands of pages, not millions).
-4: Desktop: web pages in tabs can request camera, microphone and location, because no permission handler is set.
-5: `src/ai/openai.js` is not used anywhere.
+4: `src/ai/openai.js` is not used anywhere.
+5: Desktop: no downloads panel, private windows, or tab drag-and-drop yet. The new UI was tested in headless Chromium and with a fake Electron, not in a real Electron window.

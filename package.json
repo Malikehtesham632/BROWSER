@@ -1,13 +1,18 @@
 {
-  "name": "nova-browser",
-  "version": "1.0.8",
+  "name": "omni-engine",
+  "version": "1.0.2",
   "private": true,
+  "description": "Nova Browser, powered by Omni search.",
+  "author": "Nova Browser",
+  "main": "desktop/main.cjs",
   "type": "module",
   "engines": {
     "node": ">=18.17"
   },
   "scripts": {
     "start": "node src/server.js",
+    "browser": "electron .",
+    "build:win": "electron-builder --win nsis",
     "test": "node --test tests/*.test.js",
     "test:providers": "node tests/provider-test.js",
     "crawl": "node src/crawl-cli.js",
@@ -15,6 +20,8 @@
     "evaluate:custom": "node src/eval/runner.js",
     "evaluate:quick": "node src/eval/runner.js benchmark/queries.json 10",
     "evaluate:coverage": "node src/eval/runner.js benchmark/coverage.json 10",
+    "evaluate:judged": "node src/eval/runner.js benchmark/judged.json 10",
+    "evaluate:no-authority": "node src/eval/runner.js benchmark/queries.json 10 --no-authority",
     "evaluate:corpus": "node src/eval/corpus-runner.js",
     "crawl:frontier": "node src/frontier-cli.js",
     "crawl:recrawl": "node src/recrawl-cli.js",
@@ -24,32 +31,29 @@
     "query:stats": "node src/query-cli.js stats",
     "query:list": "node src/query-cli.js list",
     "query:batch": "node src/query-batch-cli.js",
-    "browser": "electron .",
-    "dist": "electron-builder --win nsis",
-    "test:browser": "node --check desktop/main.cjs && node --check desktop/preload.cjs && node --check desktop/app.js && node --check public/app.js"
-  },
-  "productName": "Nova Browser",
-  "main": "desktop/main.cjs",
-  "dependencies": {
-    "electron-updater": "^6.6.2"
+    "format": "npx prettier@3 --write \"src/**/*.js\" \"tests/**/*.js\""
   },
   "devDependencies": {
     "electron": "^44.5.1",
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.15.3"
   },
   "build": {
     "appId": "com.nova.browser",
     "productName": "Nova Browser",
-    "asar": true,
+    "directories": {
+      "buildResources": "build",
+      "output": "release"
+    },
     "files": [
       "desktop/**/*",
       "src/**/*",
-      "public/**/*",
       "package.json",
-      "README.md",
-      ".env.example"
+      "!**/*.tmp",
+      "!**/__tests__/**"
     ],
+    "asar": true,
     "win": {
+      "icon": "build/nova.ico",
       "target": [
         {
           "target": "nsis",
@@ -57,18 +61,26 @@
             "x64"
           ]
         }
-      ]
+      ],
+      "artifactName": "${productName}-Setup-${version}.${ext}"
     },
     "nsis": {
       "oneClick": false,
       "perMachine": false,
+      "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": false,
+      "createStartMenuShortcut": false,
       "runAfterFinish": true,
-      "deleteAppDataOnUninstall": false
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "build/nova.ico",
+      "uninstallerIcon": "build/nova.ico",
+      "installerSidebar": "build/installer-sidebar.bmp",
+      "uninstallerSidebar": "build/installer-sidebar.bmp",
+      "include": "installer/installer.nsh",
+      "shortcutName": "Nova Browser",
+      "menuCategory": "Nova Browser"
     },
-    "publish": {
-      "provider": "generic",
-      "url": "https://YOUR-UPDATE-HOST.example.com/nova/"
-    }
+    "publish": null
   }
 }

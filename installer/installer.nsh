@@ -92,7 +92,6 @@ FunctionEnd
   Section /o "Also remove Nova profile data (preferences and site data)" SEC_NOVA_REMOVE_PROFILE
     SetShellVarContext current
     RMDir /r "$APPDATA\Nova Browser"
-    RMDir /r "$APPDATA\nova-browser"
     ${If} $installMode == "all"
       SetShellVarContext all
     ${EndIf}

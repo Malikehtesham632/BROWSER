@@ -1,6 +1,6 @@
 # Omni Engine v10
 
-Omni Engine v9 builds on the v8 persistent crawler/index/search foundation and adds a controlled AI Query Lab.
+Omni Engine v10 is a search engine that mixes results from web search providers with its own crawler and index, and includes a controlled AI Query Lab for generating test queries.
 
 ## Architecture
 
@@ -33,17 +33,51 @@ Set `GEMINI_API_KEY` in `.env`. Keep the key server-side and never commit `.env`
 
 The query model defaults to `gemini-3.8-flash`; override with `GEMINI_QUERY_MODEL` if desired.
 
-### SearXNG search provider
+## Omni Desktop Browser Preview
 
-SearXNG runs in parallel with configured Serper, SerpAPI, and Exa providers. Its results are normalized and pass through the same URL deduplication, weighted reciprocal-rank fusion, and reranking pipeline. Configure one or more instance base URLs; instances must allow the JSON API at `GET /search?q=...&format=json`.
+Launch the Electron desktop browser from the project folder:
 
-```env
-SEARXNG_ENABLED=true
-SEARXNG_INSTANCES=["https://searxng.deggo.fyi/"]
-SEARXNG_RETRIES=1
+```powershell
+npm run browser
 ```
 
-`SEARXNG_INSTANCES` also accepts comma-separated URLs. The legacy `SEARXNG_URL` setting remains supported when `SEARXNG_INSTANCES` is unset. An instance that blocks its JSON API is reported unhealthy; Nova does not scrape its HTML as a fallback. Provider failures do not prevent other providers from returning results. `/health` reports provider latency, failures, circuit state, and SearXNG per-instance health after searches.
+The browser starts the existing Omni search engine in its main process, so provider keys remain out of the renderer. Web pages open in isolated browser views. Errors shown in the interface use calm, non-technical wording, while technical details stay out of the way.
+
+### Firefox-style interface
+
+1: Rounded tabs with site icons, a loading spinner, pinned tabs, a right-click tab menu (reload, pin, duplicate, close others), and Ctrl+Shift+T to reopen a closed tab.
+2: One address bar with a lock icon, a bookmark star, and suggestions from your bookmarks, history and past searches. Typing words searches; typing an address opens it.
+3: A bookmarks bar (Never, New tab only, or Always), plus Bookmarks (Ctrl+B) and History (Ctrl+H) sidebars with search. History is grouped by day and can be cleared.
+4: A start page with a search box and Shortcuts tiles built from the sites you visit most.
+5: A find bar at the bottom of the window (Ctrl+F) and a Firefox-style application menu with zoom, full screen, theme (Dark, Light or System), animation settings and the list of keyboard shortcuts.
+6: Permission prompts: a page that wants your location, notifications, camera or microphone must ask, and you choose Allow or Block. Everything else is blocked.
+7: After you open a result, Back returns to your saved search results without searching again.
+
+Bookmarks, history and past searches are saved in `library.json` inside Nova's data folder (`%APPDATA%\Nova Browser`).
+
+### Search animation
+
+While a search runs, a radar shows every source reaching out. When a source answers it turns green and sends a data packet into the core, the page counter counts up, and the sites found slide in as chips. The four steps (contacting, reading, merging, ranking) and the progress bar follow the real answers from your providers, and the address bar shows a progress line. If a source fails it turns amber. Results then slide in one by one.
+
+If Windows has **Show animations** turned off, Nova follows it and uses a calm version. Open the menu, choose **Animations**, then **On** to see the full animation anyway.
+
+Omni queries every configured primary provider (Serper, SerpApi, and Exa) in parallel, merges and ranks their results, and uses configured SearXNG as a fallback when the primary providers return no results. A working search source and internet access are required for live web results; no search engine can promise results for literally every possible query. The menu displays configured sources, and failed providers do not prevent results from other healthy providers.
+
+The home page can also use the Gemini query generator to suggest related searches. Enter a topic and choose **Generate ideas**; selecting a suggestion searches for it. The generator requires `GEMINI_API_KEY` and saves its cache and query corpus to Nova's per-user data folder.
+
+In development, search and AI keys are loaded from the project's ignored `.env` file. The installer deliberately does not bundle API keys. For an installed copy, put a `.env` file in `%APPDATA%\Nova Browser` with the provider keys you want to use and restart Nova. Search needs at least one configured search provider (or a populated local index); AI suggestions additionally need `GEMINI_API_KEY`.
+
+The desktop browser is a development build. It is not yet a signed installer and does not yet include a downloads panel, private windows, or tab drag-and-drop.
+
+### Windows setup installer
+
+Create the per-user Windows NSIS installer:
+
+```powershell
+npm run build:win
+```
+
+The installer is written to `release/Nova Browser-Setup-<version>.exe`. It offers an install-location page, optional Desktop and Start Menu shortcuts, a launch-on-finish checkbox, and a profile-removal checkbox during uninstall. Upgrades keep the Nova profile under the current user's application data; profile removal is an explicit uninstall choice. Build signing can be enabled through electron-builder's `CSC_LINK` and `CSC_KEY_PASSWORD` environment variables; no signing certificate or search-provider secrets are bundled.
 
 ## Query Lab
 
@@ -127,9 +161,9 @@ Configure:
 ```env
 GEMINI_API_KEY=your_key_here
 GEMINI_QUERY_MODEL=gemini-3.8-flash
-GEMINI_FALLBACK_MODELS=gemini-3.7-flash,gemini-3.6-flash
-GEMINI_MAX_RETRIES=2
-GEMINI_RETRY_BASE_MS=800
+GEMINI_FALLBACK_MODELS=gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash
+GEMINI_MAX_RETRIES=3
+GEMINI_RETRY_BASE_MS=1000
 GEMINI_TIMEOUT_MS=30000
 GEMINI_MAX_OUTPUT_TOKENS=4000
 ```
@@ -184,17 +218,46 @@ GEMINI_CACHE_MAX_ENTRIES=2000
 GEMINI_CACHE_FILE=data/gemini-query-cache.json
 ```
 
-## Nova Browser UI
+## Crawler behavior
 
-The UI is a Firefox-style browser shell served at `/` (vanilla HTML/CSS/JS, no build step, no frontend dependencies).
-
-Run it:
-
-```bash
-npm start          # then open http://127.0.0.1:8787/
-npm run browser    # desktop app (Electron)
+```powershell
+npm run crawl -- https://example.com
+npm run crawl:recrawl
+npm run crawl:frontier
 ```
 
-The desktop app includes an integrated tab strip, address and navigation controls, a browser menu, light/dark appearance settings, and a startup option to restore the previous session. Tabs can be reordered by dragging, pinned, duplicated, muted, closed, and reopened; each tab has its own browsing history. Search results are opened in the active browser tab.
+1: robots.txt is parsed per website and cached for one hour. The most specific matching rule wins, and `Allow` wins a tie. A 4xx robots.txt means everything is allowed. A 5xx or network error means the site is treated as blocked for a few minutes.
+2: The crawler waits `CRAWLER_DELAY_MS` between requests to the same website, or the site's `Crawl-delay` if that is larger (maximum 30 seconds).
+3: A failed page is retried with growing waits (5 s, 10 s, 20 s ...) up to 3 attempts. A 404, a non-HTML page or a robots.txt block is not retried.
+4: A page that was already crawled is only crawled again after its recrawl date (7 days by default). Starting a crawl with a seed URL forces that seed to be crawled again.
+5: If a crawl stops in the middle, pages left in the `crawling` state are put back in the queue on the next start.
 
-The browser menu includes zoom, find-in-page, fullscreen, provider availability, and settings. In the desktop app, API credentials for Serper, SerpApi, Exa, and Firecrawl can be saved from Settings and are encrypted using the operating system's secure storage; restart Nova to activate changed credentials. Firecrawl is used for page extraction, not search results. SearXNG instances continue to use the `.env` configuration. Keyboard shortcuts include `Ctrl+L` to focus the address bar, `Ctrl+T` to open a tab, `Ctrl+W` to close a tab, `Ctrl+Shift+T` to reopen the last closed tab, `Ctrl+Tab` / `Ctrl+Shift+Tab` to switch tabs, `Ctrl+R` to reload or stop loading, `Ctrl+F` to find in page, `Alt+S` to open settings, `F11` for fullscreen, and `Alt+Left/Right` for back/forward.
+## Search text rules
+
+The same tokenizer is used for the index, the query and the re-ranker. It lowercases text, keeps words from any language, keeps `c++` and `c#` as one word, drops trailing dots (so `asyncio.` matches `asyncio`) and also indexes the parts of words like `node.js` and `fastapi-users`. Matching is by whole word, so `api` does not match `rapid`. Chinese, Japanese and Thai text has no spaces between words, so it is not split into words yet.
+
+## Ranking and evaluation
+
+The re-ranker adds a small boost for trusted domains. It is controlled by `RANK_AUTHORITY_WEIGHT` (default `0.04`, use `0` to turn it off) and `RANK_QUALITY_DOMAINS`.
+
+`benchmark/queries.json` counts a whole domain as relevant, and the default trusted list uses the same domains. Because of that, compare the two runs:
+
+```powershell
+npm run evaluate:quick
+npm run evaluate:no-authority
+npm run evaluate:judged
+```
+
+`evaluate:judged` uses `benchmark/judged.json`, where each exact URL has a grade from 0 to 3. These are starter judgments: check each URL and add more.
+
+## Server safety
+
+The server refuses to start when `HOST` is not local and `OMNI_API_TOKEN` is empty, because `/queries/generate`, `/queries/smart` and `/scrape` can spend paid API credits. Gemini requests send the key in the `x-goog-api-key` header, not in the URL. `gemini-3.8-flash`, `3.7` and `3.6` are short-term models, so the stable `gemini-3.5-flash` is the last fallback.
+
+## Code style
+
+```powershell
+npm run format
+```
+
+`tests/provider-test.js` is a manual tool that calls real providers with your API keys, so `npm test` does not run it. Use `npm run test:providers`.

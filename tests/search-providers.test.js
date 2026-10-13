@@ -58,12 +58,12 @@ test('all configured web-search integrations run and return usable results', asy
   );
   const engine = createSearchEngine(config, { fetchImpl });
   const result = await engine.search('Python', { fresh: true, limit: 10 });
-  assert.deepEqual([...called].sort(), ['api.exa.ai', 'google.serper.dev', 'search.example', 'serpapi.com']);
-  assert.equal(result.results.length, 4);
+  assert.deepEqual([...called].sort(), ['api.exa.ai', 'google.serper.dev', 'serpapi.com']);
+  assert.equal(result.results.length, 3);
   assert.equal(result.providers.serper.ok, true);
   assert.equal(result.providers.serpapi.ok, true);
   assert.equal(result.providers.exa.ok, true);
-  assert.equal(result.providers.searxng.ok, true);
+  assert.equal(result.providers.searxng, undefined);
 });
 
 test('provider responses report real incremental results to the caller', async () => {
@@ -100,7 +100,7 @@ test('provider responses report real incremental results to the caller', async (
   );
 });
 
-test('SearXNG participates in parallel search and healthy providers survive provider failures', async () => {
+test('search continues with healthy providers and activates SearXNG when primaries fail', async () => {
   const called = new Set();
   const fetchImpl = async (url) => {
     const host = new URL(url).hostname;
@@ -132,44 +132,4 @@ test('SearXNG participates in parallel search and healthy providers survive prov
   assert.equal(result.providers.serpapi.ok, true);
   assert.equal(result.providers.exa.ok, true);
   assert.equal(result.providers.searxng.ok, true);
-});
-
-test('SearXNG is queried alongside successful primary providers and joins duplicate fusion', async () => {
-  const calls = [];
-  const fetchImpl = async (url) => {
-    const host = new URL(url).hostname;
-    calls.push(host);
-    if (host === 'google.serper.dev') {
-      return jsonResponse({
-        organic: [{ link: 'https://shared.example/python?utm_source=serper', title: 'Python from Serper' }]
-      });
-    }
-    if (host === 'search.example') {
-      return jsonResponse({
-        results: [{
-          url: 'https://shared.example/python',
-          title: 'Python from SearXNG',
-          engines: ['brave', 'google']
-        }]
-      });
-    }
-    throw new Error(`Unexpected provider host: ${host}`);
-  };
-  const engine = createSearchEngine({
-    ...config,
-    keys: { serper: 'test-serper-key' },
-    searxngEnabled: true,
-    searxngInstances: ['https://search.example'],
-    weights: { serper: 1, searxng: 0.8 }
-  }, { fetchImpl, logger: { info() {}, warn() {} } });
-
-  const output = await engine.search('Python', { fresh: true });
-  assert.deepEqual(calls.sort(), ['google.serper.dev', 'search.example']);
-  assert.equal(output.providers.searxng.ok, true);
-  assert.equal(output.results.length, 1);
-  assert.deepEqual(output.results[0].sources.sort(), ['searxng', 'serper']);
-  assert.deepEqual(output.results[0].engines, ['brave', 'google']);
-  assert.equal(output.results[0].ranks.searxng, 1);
-  assert.equal(output.results[0].ranks.serper, 1);
-  assert.equal(engine.providerHealth().searxng.instances[0].healthy, true);
 });

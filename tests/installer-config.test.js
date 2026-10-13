@@ -11,9 +11,6 @@ const nsis = await fs.readFile(path.join(root, 'installer', 'installer.nsh'), 'u
 test('Windows build uses a per-user, branded assisted NSIS installer', () => {
   assert.equal(manifest.build.appId, 'com.nova.browser');
   assert.equal(manifest.build.productName, 'Nova Browser');
-  assert.equal(manifest.build.win.icon, 'build/nova.ico');
-  assert.equal(manifest.build.nsis.include, 'installer/installer.nsh');
-  assert.equal(manifest.build.nsis.installerIcon, 'build/nova.ico');
   assert.deepEqual(manifest.build.win.target, [{ target: 'nsis', arch: ['x64'] }]);
   assert.equal(manifest.build.nsis.oneClick, false);
   assert.equal(manifest.build.nsis.perMachine, false);
