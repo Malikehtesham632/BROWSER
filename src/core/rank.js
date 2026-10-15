@@ -22,6 +22,23 @@ export function fuseResults(lists, { k = 60, weights = {}, limit = 20 } = {}) {
         };
         merged.set(key, e);
       }
+      const incomingEngines = Array.isArray(result.engines)
+        ? result.engines
+        : (typeof result.engine === 'string' && result.engine ? [result.engine] : []);
+      if (incomingEngines.length) {
+        e.engines ??= [];
+        for (const engine of incomingEngines) {
+          if (typeof engine === 'string' && engine.trim() && !e.engines.includes(engine.trim())) {
+            e.engines.push(engine.trim());
+          }
+        }
+        if (!e.engine && typeof result.engine === 'string' && result.engine.trim()) {
+          e.engine = result.engine.trim();
+        }
+        if (!e.engine && e.engines.length) e.engine = e.engines[0];
+      }
+      // Multiple SearXNG engines may return the same URL within one provider.
+      // Preserve that engine metadata even when rank/source is deduplicated.
       if (e.ranks[source] !== undefined) return;
       e.ranks[source] = rank;
       e.sources.push(source);

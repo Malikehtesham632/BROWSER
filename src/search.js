@@ -8,6 +8,7 @@ import {
   searchSerpApi,
   searchExa,
   searchSearxng,
+  createSearxngProvider,
   scrapeWithFirecrawl
 } from './providers/index.js';
 import { analyzeQuery, queryFeatures } from './query/analyzer.js';
@@ -42,12 +43,22 @@ export function buildProviders(config, fetchImpl) {
       tier: 'primary',
       run: (q, o) => searchExa(q, config.keys.exa, shared(o))
     });
-  if (config.searxngUrl)
+  const searxngUrls = (Array.isArray(config.searxngUrl)
+    ? config.searxngUrl
+    : String(config.searxngUrl || '').split(','))
+    .map((value) => String(value).trim())
+    .filter(Boolean);
+  if (searxngUrls.length) {
+    const searxng = createSearxngProvider(searxngUrls, {
+      timeoutMs: config.providerTimeoutMs,
+      fetchImpl
+    });
     list.push({
       name: 'searxng',
       tier: 'fallback',
-      run: (q, o) => searchSearxng(q, config.searxngUrl, shared(o))
+      run: (q, o) => searxng.run(q, shared(o))
     });
+  }
   return list;
 }
 export function createSearchEngine(config, deps = {}) {
@@ -61,7 +72,8 @@ export function createSearchEngine(config, deps = {}) {
         cooldownMs: config.breakerCooldownMs
       }),
     inflight = new Map(),
-    store = deps.store;
+    store = deps.store,
+    logger = deps.logger ?? console;
   async function callProvider(provider, q, ctx) {
     const started = Date.now();
     if (breaker.isOpen(provider.name)) {
@@ -85,7 +97,10 @@ export function createSearchEngine(config, deps = {}) {
       ctx.providers[provider.name] = s;
       ctx.onProvider?.({ provider: s, results: ctx.fuse() });
     } catch (err) {
+      const wasOpen = breaker.isOpen(provider.name);
       breaker.failure(provider.name);
+      const isOpen = breaker.isOpen(provider.name);
+      if (!wasOpen && isOpen) logger.warn?.(`[${provider.name}] circuit opened`);
       const s = {
         name: provider.name,
         ok: false,
@@ -203,6 +218,16 @@ export function createSearchEngine(config, deps = {}) {
     search,
     scrape,
     providerNames: () => providers.map((p) => p.name),
+    providerHealth: () => Object.fromEntries(providers.map((provider) => {
+      const circuitOpen = breaker.isOpen(provider.name);
+      const state = breaker.state?.get(provider.name) ?? {};
+      return [provider.name, {
+        circuitOpen,
+        consecutiveFailures: state.failures ?? 0,
+        failures: state.failures ?? 0,
+        openUntil: state.openUntil || null
+      }];
+    })),
     indexStats: () => store?.stats?.() ?? { documents: 0, terms: 0, words: 0 }
   };
 }

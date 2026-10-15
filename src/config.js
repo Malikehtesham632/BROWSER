@@ -43,7 +43,7 @@ export function loadConfig() {
       firecrawl: process.env.FIRECRAWL_API_KEY
     },
     searxngUrl: process.env.SEARXNG_URL || '',
-    providerTimeoutMs: num('PROVIDER_TIMEOUT_MS', 4000),
+    providerTimeoutMs: num('PROVIDER_TIMEOUT_MS', 8000),
     scrapeTimeoutMs: num('SCRAPE_TIMEOUT_MS', 30000),
     cacheTtlMs: num('CACHE_TTL_SECONDS', 900) * 1000,
     scrapeCacheTtlMs: num('SCRAPE_CACHE_TTL_SECONDS', 3600) * 1000,
