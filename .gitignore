@@ -5,7 +5,12 @@ node_modules/
 __pycache__/
 release/
 dist/
+installer-output*/
 *.log
 *.tmp
+*.corrupt
 data/
 reports/
+.vscode/
+.DS_Store
+Thumbs.db

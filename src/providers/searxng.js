@@ -1,149 +1,136 @@
 import { fetchJson, ProviderError } from './http.js';
-import { normalizeSearchResult } from './normalize.js';
+import { normalizeResults } from './normalize.js';
 
-function normalizeInstanceUrl(baseUrl) {
+function normalizeInstance(instance) {
   let url;
   try {
-    url = new URL(String(baseUrl || '').trim());
+    url = new URL(instance);
   } catch {
-    throw new ProviderError('searxng URL is invalid', { provider: 'searxng' });
+    throw new Error(`Invalid SearXNG instance URL: ${String(instance)}`);
   }
-
-  if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) {
-    throw new ProviderError('searxng URL must be a valid HTTP(S) URL without embedded credentials', {
-      provider: 'searxng'
-    });
-  }
-
-  // Allow reverse-proxy deployments under a subpath, e.g. https://host/searx/.
-  url.pathname = `${url.pathname.replace(/\/+$/, '')}/search`.replace(/^\/\//, '/');
-  url.search = '';
-  url.hash = '';
-  return url;
+  if (
+    !['http:', 'https:'].includes(url.protocol) ||
+    url.username ||
+    url.password ||
+    url.search ||
+    url.hash
+  )
+    throw new Error(
+      `SearXNG instance must be a credential-free HTTP(S) base URL: ${String(instance)}`
+    );
+  return url.href.replace(/\/+$/, '');
 }
 
 export async function searchSearxng(query, baseUrl, opts = {}) {
-  if (!baseUrl) throw new ProviderError('SEARXNG_URL is missing', { provider: 'searxng' });
-
-  const url = normalizeInstanceUrl(baseUrl);
-  url.searchParams.set('q', String(query));
+  if (!baseUrl) throw new Error('SEARXNG_URL is missing');
+  const instance = normalizeInstance(baseUrl);
+  const url = new URL(`${instance}/search`);
+  url.searchParams.set('q', query);
   url.searchParams.set('format', 'json');
 
-  const data = await fetchJson(url.toString(), {
-    provider: 'searxng',
-    timeoutMs: opts.timeoutMs,
-    retries: opts.retries,
-    retryBaseMs: opts.retryBaseMs,
-    fetchImpl: opts.fetchImpl,
-    headers: { Accept: 'application/json', ...(opts.headers || {}) }
-  });
+  let data;
+  try {
+    data = await fetchJson(url.href, {
+      provider: 'searxng',
+      timeoutMs: opts.timeoutMs,
+      retries: opts.retries,
+      maxTotalMs: opts.totalTimeoutMs,
+      fetchImpl: opts.fetchImpl,
+      headers: { Accept: 'application/json' },
+      includeErrorBody: false
+    });
+  } catch (error) {
+    if (error instanceof ProviderError) throw error;
+    throw new ProviderError('searxng connection failed', { provider: 'searxng', retryable: true });
+  }
 
-  if (!data || typeof data !== 'object' || !Array.isArray(data.results)) {
+  if (!data || typeof data !== 'object' || !Array.isArray(data.results))
     throw new ProviderError('searxng returned an invalid response: expected a results array', {
       provider: 'searxng'
     });
-  }
 
-  const normalized = [];
-  for (const item of data.results.slice(0, opts.num ?? 10)) {
-    const result = normalizeSearchResult(item, 'searxng', normalized.length + 1);
-    if (!result) continue;
-
-    const engines = Array.isArray(item.engines)
-      ? [...new Set(item.engines.filter((value) => typeof value === 'string' && value.trim()).map((value) => value.trim()))]
-      : [];
-    if (typeof item.engine === 'string' && item.engine.trim()) {
-      result.engine = item.engine.trim();
-      if (engines.length && !engines.includes(result.engine)) engines.unshift(result.engine);
-    }
-    if (engines.length) {
-      result.engines = engines;
-      if (!result.engine) result.engine = engines[0];
-    }
-    normalized.push(result);
-  }
-  return normalized;
+  const results = normalizeResults(data.results.slice(0, opts.num ?? 10), 'searxng', opts);
+  if (data.results.length && !results.length)
+    throw new ProviderError('searxng returned results without valid URLs', { provider: 'searxng' });
+  return results;
 }
 
-/**
- * Try configured SearXNG instances in order. Network failures are reported
- * without exposing the query or upstream response body. A single timeout
- * budget is shared across the list so dead instances cannot stall forever.
- */
-export function createSearxngProvider(instances, defaults = {}) {
-  const urls = (Array.isArray(instances) ? instances : String(instances || '').split(','))
-    .map((value) => String(value).trim())
-    .filter(Boolean);
-  const logger = defaults.logger || console;
-  const health = urls.map((url) => ({
-    url,
+export function createSearxngProvider(
+  instances,
+  {
+    timeoutMs = 4000,
+    retries = 1,
+    fetchImpl = globalThis.fetch,
+    logger = console,
+    now = Date.now
+  } = {}
+) {
+  const urls = [...new Set((instances || []).map(normalizeInstance))];
+  if (!urls.length) throw new Error('At least one SearXNG instance is required');
+
+  const states = urls.map((url) => ({
+    instance: url,
     healthy: null,
+    latencyMs: null,
     failures: 0,
-    consecutiveFailures: 0,
-    lastError: null,
     lastSuccessAt: null,
-    latencyMs: null
+    consecutiveFailures: 0,
+    lastError: null
   }));
+  let cursor = 0;
 
-  async function run(query, overrides = {}) {
-    if (!urls.length) throw new ProviderError('SEARXNG_URL is missing', { provider: 'searxng' });
+  async function run(query, { num = 10 } = {}) {
+    let lastError;
+    const start = cursor;
+    cursor = (cursor + 1) % urls.length;
+    const deadline = now() + timeoutMs;
 
-    const options = { ...defaults, ...overrides };
-    const timeoutMs = Number(options.timeoutMs ?? 8000);
-    const startedAt = Date.now();
-    const deadline = startedAt + timeoutMs;
-    let lastError = null;
+    for (let offset = 0; offset < urls.length; offset++) {
+      const index = (start + offset) % urls.length;
+      const url = urls[index];
+      const state = states[index];
+      const started = now();
+      const remaining = deadline - now();
+      if (remaining <= 0) break;
 
-    for (let index = 0; index < urls.length; index++) {
-      const remainingMs = deadline - Date.now();
-      if (remainingMs <= 0) {
-        lastError = new ProviderError(`searxng timed out after ${timeoutMs}ms`, { provider: 'searxng' });
-        break;
-      }
-
-      const state = health[index];
-      const instanceStartedAt = Date.now();
+      logger.info?.(`[searxng] request started instance=${new URL(url).host}`);
       try {
-        logger.info?.(`[SearXNG] instance ${index + 1}/${urls.length} request started`);
-        const results = await searchSearxng(query, urls[index], {
-          ...options,
-          timeoutMs: remainingMs,
-          // Do not allow per-instance retries to exceed the shared budget.
-          retries: 0
+        const results = await searchSearxng(query, url, {
+          num,
+          timeoutMs: Math.min(timeoutMs, remaining),
+          totalTimeoutMs: remaining,
+          retries,
+          fetchImpl
         });
         state.healthy = true;
+        state.latencyMs = Math.max(0, now() - started);
+        state.lastSuccessAt = new Date(now()).toISOString();
         state.consecutiveFailures = 0;
         state.lastError = null;
-        state.lastSuccessAt = new Date().toISOString();
-        state.latencyMs = Date.now() - instanceStartedAt;
-        logger.info?.(`[SearXNG] instance ${index + 1}/${urls.length} request succeeded (${results.length} results)`);
+        logger.info?.(
+          `[searxng] request succeeded instance=${new URL(url).host} latencyMs=${state.latencyMs} results=${results.length}`
+        );
         return results;
       } catch (error) {
-        const message = error instanceof ProviderError
-          ? error.message
-          : `searxng connection failed${error?.cause?.code ? ` (${error.cause.code})` : ''}`;
         state.healthy = false;
+        state.latencyMs = Math.max(0, now() - started);
         state.failures++;
         state.consecutiveFailures++;
-        state.lastError = message.slice(0, 120);
-        state.latencyMs = Date.now() - instanceStartedAt;
-        lastError = error instanceof ProviderError
-          ? error
-          : new ProviderError(message, { provider: 'searxng', cause: error });
-        logger.warn?.(`[SearXNG] instance ${index + 1}/${urls.length} request failed: ${state.lastError}`);
-
-        // A consumed timeout budget is not reset for later instances.
-        if (Date.now() >= deadline || /timed out after/i.test(state.lastError)) break;
+        state.lastError = String(error?.message ?? error).slice(0, 200);
+        lastError = error;
+        logger.warn?.(
+          `[searxng] request failed instance=${new URL(url).host} latencyMs=${state.latencyMs} error=${state.lastError}`
+        );
       }
     }
 
-    throw lastError || new ProviderError('searxng request failed', { provider: 'searxng' });
+    if (now() >= deadline)
+      throw new ProviderError(`searxng timed out after ${timeoutMs}ms`, { provider: 'searxng' });
+    throw (
+      lastError ||
+      new ProviderError(`searxng timed out after ${timeoutMs}ms`, { provider: 'searxng' })
+    );
   }
 
-  return {
-    name: 'searxng',
-    run,
-    health: () => health.map((entry) => ({ ...entry })),
-    getHealth: () => health.map((entry) => ({ ...entry }))
-  };
+  return { run, health: () => states.map((state) => ({ ...state })) };
 }

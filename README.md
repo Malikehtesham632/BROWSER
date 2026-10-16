@@ -1,13 +1,54 @@
-# Omni Engine v10
+# Nova Browser · Omni Engine
 
-Omni Engine v10 is a search engine that mixes results from web search providers with its own crawler and index, and includes a controlled AI Query Lab for generating test queries.
+[![CI](https://github.com/Malikehtesham632/BROWSER/actions/workflows/ci.yml/badge.svg)](https://github.com/Malikehtesham632/BROWSER/actions/workflows/ci.yml)
+
+Nova Browser is a Windows desktop browser with a Firefox-style interface. It is powered by **Omni Engine**, a search engine that mixes results from several web search providers with its own crawler and index, and includes a controlled AI Query Lab for generating test queries.
+
+## Quick start
+
+You need [Node.js 22](https://nodejs.org/) or newer.
+
+```powershell
+npm install
+Copy-Item .env.example .env
+npm run browser
+```
+
+Without any key the browser still searches through SearXNG (see the privacy note below). Add provider keys to `.env` for better results. Never commit `.env`.
+
+| Command | What it does |
+| --- | --- |
+| `npm run browser` | Start the desktop browser |
+| `npm start` | Start the search server and web page at `http://127.0.0.1:8787` |
+| `npm test` | Run all tests |
+| `npm run build:win` | Build the Windows installer into `release/` |
+| `npm run format` | Format the code |
+
+## Project layout
+
+```text
+desktop/     Electron app: main process, preload bridge, screens, bookmarks and history storage
+src/         Omni Engine: search, providers, ranking, crawler, index, Query Lab, HTTP server
+public/      Web page served by `npm start`
+tests/       Automated tests (node:test, no extra packages)
+benchmark/   Evaluation query sets
+build/       Installer icons and artwork
+installer/   NSIS installer script
+```
+
+## Privacy
+
+1: **SearXNG.** When SearXNG is on, the text you search for is sent to the SearXNG servers it uses. If `SEARXNG_INSTANCES` is empty, Nova uses a few public servers run by third parties. To keep every search private, set `SEARXNG_ENABLED=false`, or list only your own server.
+2: **Search providers.** Serper, SerpApi and Exa receive your search text when you add their keys.
+3: **Bookmarks and history** stay on your computer, in `%APPDATA%\Nova Browser\library.json`.
+4: **Keys** stay in the main process or in `.env`. They are never given to web pages or the interface, and the installer contains none.
 
 ## Architecture
 
 ```text
 User Query
   -> Query Analyzer
-  -> Omni Index + Discovery Providers
+  -> Omni Index + Discovery Providers (Serper, SerpApi, Exa, SearXNG)
   -> Fusion
   -> Omni Re-ranker
   -> Final Results
@@ -29,9 +70,7 @@ npm install
 Copy-Item .env.example .env
 ```
 
-Set `GEMINI_API_KEY` in `.env`. Keep the key server-side and never commit `.env`.
-
-The query model defaults to `gemini-3.8-flash`; override with `GEMINI_QUERY_MODEL` if desired.
+Set `GEMINI_API_KEY` in `.env` to use the Query Lab and the "Explore a topic" card. The query model defaults to `gemini-3.5-flash`. Do not use `gemini-2.5-flash`: Google is shutting it down on 16 October 2026.
 
 ## Omni Desktop Browser Preview
 
@@ -127,6 +166,16 @@ Start Omni:
 npm start
 ```
 
+Open `http://127.0.0.1:8787` for the web page. The page is served with a strict content security policy, and only simple file types from `public/` are served (never hidden files or files outside that folder).
+
+Search:
+
+```text
+GET /health
+GET /search?q=python%20asyncio
+GET /search/stream?q=python%20asyncio     (live progress, one event per provider)
+```
+
 Query corpus:
 
 ```text
@@ -150,7 +199,15 @@ For large-scale generation, use many seeds by category rather than asking one mo
 npm test
 ```
 
-The test suite covers the crawler/index/search foundation plus the AI client parser, persistent query corpus, and query generation layer using mocked Gemini responses.
+The test suite has 217 tests. They cover the crawler, index and ranking, the search providers (including SearXNG), the AI client and query corpus, the HTTP server and web page serving, bookmarks, history and permissions, and the desktop main process (run against a fake Electron). The interface itself was checked in a headless browser. CI runs the tests on Windows and Linux for every push and pull request.
+
+## Releasing
+
+1: Change `version` in `package.json` and describe the change in `CHANGES.md`.
+2: Commit, then tag it: `git tag v1.1.0` and `git push origin main --tags`.
+3: The **Build Windows installer** workflow runs the tests, builds `Nova Browser-Setup-<version>.exe`, and attaches it to a GitHub release. Installers are never committed to the repository.
+
+The installer is not code-signed yet, so Windows SmartScreen will warn. Add `CSC_LINK` and `CSC_KEY_PASSWORD` as repository secrets to sign it.
 
 ## Gemini Query Lab + Corpus Evaluation
 
@@ -160,8 +217,8 @@ Configure:
 
 ```env
 GEMINI_API_KEY=your_key_here
-GEMINI_QUERY_MODEL=gemini-3.8-flash
-GEMINI_FALLBACK_MODELS=gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash
+GEMINI_QUERY_MODEL=gemini-3.5-flash
+GEMINI_FALLBACK_MODELS=gemini-3.6-flash,gemini-3.7-flash
 GEMINI_MAX_RETRIES=3
 GEMINI_RETRY_BASE_MS=1000
 GEMINI_TIMEOUT_MS=30000
@@ -252,7 +309,7 @@ npm run evaluate:judged
 
 ## Server safety
 
-The server refuses to start when `HOST` is not local and `OMNI_API_TOKEN` is empty, because `/queries/generate`, `/queries/smart` and `/scrape` can spend paid API credits. Gemini requests send the key in the `x-goog-api-key` header, not in the URL. `gemini-3.8-flash`, `3.7` and `3.6` are short-term models, so the stable `gemini-3.5-flash` is the last fallback.
+The server refuses to start when `HOST` is not local and `OMNI_API_TOKEN` is empty, because `/queries/generate`, `/queries/smart` and `/scrape` can spend paid API credits. Gemini requests send the key in the `x-goog-api-key` header, not in the URL. The default model is the stable `gemini-3.5-flash`; if you choose another model, `gemini-3.5-flash` is added as the last fallback.
 
 ## Code style
 

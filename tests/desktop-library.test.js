@@ -34,7 +34,13 @@ test('bookmarks can be added, found, toggled and removed', async () => {
 
 test('only normal web addresses are stored', async () => {
   const { lib } = await makeLibrary();
-  for (const bad of ['javascript:alert(1)', 'file:///etc/passwd', 'not a url', 'https://user:pw@example.com', '']) {
+  for (const bad of [
+    'javascript:alert(1)',
+    'file:///etc/passwd',
+    'not a url',
+    'https://user:pw@example.com',
+    ''
+  ]) {
     assert.equal(lib.addBookmark(bad, 'x'), null, bad);
     assert.equal(lib.recordVisit(bad, 'x'), null, bad);
   }
@@ -50,7 +56,10 @@ test('visits are counted and ordered by the most recent', async () => {
   clock.time += 1000;
   lib.recordVisit('https://a.example/', '');
   const entries = lib.history();
-  assert.deepEqual(entries.map((e) => e.url), ['https://a.example/', 'https://b.example/']);
+  assert.deepEqual(
+    entries.map((e) => e.url),
+    ['https://a.example/', 'https://b.example/']
+  );
   assert.equal(entries[0].visitCount, 2);
   assert.equal(entries[0].title, 'A');
   lib.updateTitle('https://a.example/', 'A renamed');
@@ -161,10 +170,18 @@ test('unexpected data in the file is cleaned while loading', async () => {
   await fs.writeFile(
     file,
     JSON.stringify({
-      bookmarks: [{ url: 'javascript:1' }, { url: 'https://ok.example/', title: 'Ok' }, null, { url: 'https://ok.example/#x' }],
+      bookmarks: [
+        { url: 'javascript:1' },
+        { url: 'https://ok.example/', title: 'Ok' },
+        null,
+        { url: 'https://ok.example/#x' }
+      ],
       history: [{ url: 'file:///x' }, { url: 'https://ok.example/', visitCount: -5 }],
       searches: [{ query: '' }, { query: 'fine' }],
-      icons: { 'https://ok.example': 'http://ok.example/i.png', 'not an origin': 'https://x.example/i.png' }
+      icons: {
+        'https://ok.example': 'http://ok.example/i.png',
+        'not an origin': 'https://x.example/i.png'
+      }
     })
   );
   const lib = new Library(file);

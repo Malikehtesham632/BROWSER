@@ -1,6 +1,7 @@
 import http from 'node:http';
 import { timingSafeEqual } from 'node:crypto';
-import { pathToFileURL } from 'node:url';
+import { isIP } from 'node:net';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { loadConfig, loadEnvFile } from './config.js';
 import { createSearchEngine, normalizeQuery } from './search.js';
 import { OmniError } from './core/errors.js';
@@ -9,6 +10,9 @@ import { createGeminiClient } from './ai/gemini.js';
 import { AICache } from './ai/cache.js';
 import { QueryCorpus } from './queries/corpus.js';
 import { createQueryGenerator } from './queries/generator.js';
+import { createStaticHandler } from './static.js';
+import path from 'node:path';
+const PUBLIC_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'public');
 const publicProviders = (p) =>
   Object.fromEntries(
     Object.entries(p).map(([n, v]) => [
@@ -29,16 +33,23 @@ function tokenMatches(h, t) {
     b = Buffer.from(t);
   return a.length === b.length && timingSafeEqual(a, b);
 }
-function isLoopbackHost(host) {
-  const name = String(host || '').toLowerCase();
-  return name === 'localhost' || name === '::1' || name === '[::1]' || /^127\./.test(name);
-}
 export function securityProblem(config) {
   const { host, apiToken } = config.server;
-  if (apiToken || isLoopbackHost(host)) return null;
-  return `HOST is "${host}" but OMNI_API_TOKEN is empty. Set OMNI_API_TOKEN, or use HOST=127.0.0.1.`;
+  const normalized = String(host || '')
+    .replace(/^\[|\]$/g, '')
+    .toLowerCase();
+  const loopback =
+    normalized === 'localhost' ||
+    normalized.endsWith('.localhost') ||
+    normalized === '::1' ||
+    (isIP(normalized) === 4 && Number(normalized.split('.')[0]) === 127);
+  return loopback || apiToken
+    ? null
+    : 'Binding to a public interface requires OMNI_API_TOKEN to be configured.';
 }
 export function createServer(engine, config, deps = {}) {
+  const problem = securityProblem(config);
+  if (problem) throw new OmniError('INSECURE_BIND', problem, 500);
   const logger = deps.logger ?? console,
     now = deps.now ?? Date.now,
     hits = new Map(),
@@ -81,6 +92,7 @@ export function createServer(engine, config, deps = {}) {
       return send(res, 200, {
         ok: true,
         providers: engine.providerNames(),
+        providerHealth: engine.providerHealth?.() ?? {},
         index: engine.indexStats()
       });
     if (apiToken && !tokenMatches(req.headers.authorization, apiToken))
@@ -115,6 +127,10 @@ export function createServer(engine, config, deps = {}) {
         if (!res.writableEnded) res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
       };
       try {
+        write('start', {
+          providers: engine.providerNames(),
+          indexDocuments: engine.indexStats()?.documents ?? engine.indexStats()?.count ?? 0
+        });
         const out = await engine.search(q, {
           num,
           onProvider: ({ provider, results }) =>
@@ -180,13 +196,19 @@ export function createServer(engine, config, deps = {}) {
     if (u.pathname === '/index/stats') return send(res, 200, engine.indexStats());
     return send(res, 404, { error: 'Not found' });
   }
-  const server = http.createServer((req, res) =>
-    route(req, res).catch((e) => {
+  const serveStatic = createStaticHandler(deps.publicDir ?? PUBLIC_DIR);
+  const server = http.createServer(async (req, res) => {
+    try {
+      if (await serveStatic(req, res)) return;
+    } catch (e) {
+      logger.error?.(e);
+    }
+    return route(req, res).catch((e) => {
       if (e instanceof OmniError) return send(res, e.status, { error: e.message });
       logger.error?.(e);
       send(res, 500, { error: 'Internal error' });
-    })
-  );
+    });
+  });
   const cleanup = setInterval(() => {
     const t = now();
     for (const [ip, times] of hits) if (times.every((x) => t - x >= 60000)) hits.delete(ip);
@@ -202,25 +224,26 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const problem = securityProblem(config);
   if (problem) {
     console.error(problem);
-    process.exit(1);
+    process.exitCode = 1;
+  } else {
+    const store = new DocumentStore(config.indexFile);
+    await store.init();
+    const engine = createSearchEngine(config, { store });
+    const queryCorpus = new QueryCorpus(config.ai.corpusFile);
+    await queryCorpus.init();
+    const aiCache = new AICache(config.ai.cacheFile, {
+      ttlMs: config.ai.cacheTtlMs,
+      maxEntries: config.ai.cacheMaxEntries
+    });
+    await aiCache.init();
+    const queryGenerator = config.ai.apiKey
+      ? createQueryGenerator(createGeminiClient(config, { cache: aiCache }), queryCorpus)
+      : null;
+    const server = createServer(engine, config, { queryCorpus, queryGenerator });
+    server.listen(config.server.port, config.server.host, () =>
+      console.log(
+        `Omni Engine API on http://${config.server.host}:${config.server.port}\nProviders: ${engine.providerNames().join(', ') || '(none)'}\nIndex: ${config.indexFile}`
+      )
+    );
   }
-  const store = new DocumentStore(config.indexFile);
-  await store.init();
-  const engine = createSearchEngine(config, { store });
-  const queryCorpus = new QueryCorpus(config.ai.corpusFile);
-  await queryCorpus.init();
-  const aiCache = new AICache(config.ai.cacheFile, {
-    ttlMs: config.ai.cacheTtlMs,
-    maxEntries: config.ai.cacheMaxEntries
-  });
-  await aiCache.init();
-  const queryGenerator = config.ai.apiKey
-    ? createQueryGenerator(createGeminiClient(config, { cache: aiCache }), queryCorpus)
-    : null;
-  const server = createServer(engine, config, { queryCorpus, queryGenerator });
-  server.listen(config.server.port, config.server.host, () =>
-    console.log(
-      `Omni Engine API on http://${config.server.host}:${config.server.port}\nProviders: ${engine.providerNames().join(', ') || '(none)'}\nIndex: ${config.indexFile}`
-    )
-  );
 }

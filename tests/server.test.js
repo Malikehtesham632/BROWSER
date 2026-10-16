@@ -51,6 +51,12 @@ test('server allows local hosts without a token', () => {
   }
 });
 
+test('hostnames that only look like local addresses are refused', () => {
+  for (const host of ['127.evil.com', 'localhost.evil.com', '127.0.0.1.nip.io']) {
+    assert.match(securityProblem(makeConfig({ host })), /OMNI_API_TOKEN/, host);
+  }
+});
+
 test('server allows a public host when a token is set', () => {
   assert.equal(securityProblem(makeConfig({ host: '0.0.0.0', apiToken: 'secret' })), null);
 });

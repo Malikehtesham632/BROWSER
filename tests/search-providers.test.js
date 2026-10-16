@@ -58,12 +58,17 @@ test('all configured web-search integrations run and return usable results', asy
   );
   const engine = createSearchEngine(config, { fetchImpl });
   const result = await engine.search('Python', { fresh: true, limit: 10 });
-  assert.deepEqual([...called].sort(), ['api.exa.ai', 'google.serper.dev', 'serpapi.com']);
-  assert.equal(result.results.length, 3);
+  assert.deepEqual([...called].sort(), [
+    'api.exa.ai',
+    'google.serper.dev',
+    'search.example',
+    'serpapi.com'
+  ]);
+  assert.equal(result.results.length, 4);
   assert.equal(result.providers.serper.ok, true);
   assert.equal(result.providers.serpapi.ok, true);
   assert.equal(result.providers.exa.ok, true);
-  assert.equal(result.providers.searxng, undefined);
+  assert.equal(result.providers.searxng.ok, true);
 });
 
 test('provider responses report real incremental results to the caller', async () => {

@@ -34,7 +34,13 @@ test('safe features are allowed without asking', async () => {
 
 test('risky or unknown features are denied without asking', async () => {
   const { policy, asked, known } = setup();
-  for (const permission of ['midi', 'openExternal', 'clipboard-read', 'display-capture', 'unknown-thing']) {
+  for (const permission of [
+    'midi',
+    'openExternal',
+    'clipboard-read',
+    'display-capture',
+    'unknown-thing'
+  ]) {
     assert.equal(await request(policy, known, permission), false, permission);
   }
   assert.equal(asked.length, 0);
@@ -43,7 +49,10 @@ test('risky or unknown features are denied without asking', async () => {
 test('requests from unknown pages are denied', async () => {
   const { policy, asked } = setup();
   const stranger = { getURL: () => 'https://evil.example/' };
-  assert.equal(await request(policy, stranger, 'geolocation', { requestingUrl: 'https://evil.example/' }), false);
+  assert.equal(
+    await request(policy, stranger, 'geolocation', { requestingUrl: 'https://evil.example/' }),
+    false
+  );
   assert.equal(asked.length, 0);
 });
 
@@ -83,16 +92,23 @@ test('an answer is remembered for that site and feature', async () => {
 test('only an explicit true counts as allow', () => {
   const { policy, asked, known } = setup();
   const answers = [];
-  policy.onRequest(known, 'geolocation', (v) => answers.push(v), { requestingUrl: 'https://site.example/' });
+  policy.onRequest(known, 'geolocation', (v) => answers.push(v), {
+    requestingUrl: 'https://site.example/'
+  });
   policy.respond(asked[0].id, 'yes');
   assert.deepEqual(answers, [false]);
 });
 
 test('a question nobody answers is denied after the timeout', async () => {
+  const keepAlive = setTimeout(() => {}, 5000);
   const { policy, asked, known } = setup({ timeoutMs: 10 });
   const answer = await new Promise((resolve) =>
-    policy.onRequest(known, 'media', resolve, { requestingUrl: 'https://site.example/', mediaTypes: ['video'] })
+    policy.onRequest(known, 'media', resolve, {
+      requestingUrl: 'https://site.example/',
+      mediaTypes: ['video']
+    })
   );
+  clearTimeout(keepAlive);
   assert.equal(answer, false);
   assert.equal(asked[0].action, 'use your camera');
   assert.equal(policy.pendingCount(), 0);
@@ -101,8 +117,12 @@ test('a question nobody answers is denied after the timeout', async () => {
 test('denyAll answers every open question with no', () => {
   const { policy, known } = setup();
   const answers = [];
-  policy.onRequest(known, 'geolocation', (v) => answers.push(v), { requestingUrl: 'https://a.example/' });
-  policy.onRequest(known, 'notifications', (v) => answers.push(v), { requestingUrl: 'https://b.example/' });
+  policy.onRequest(known, 'geolocation', (v) => answers.push(v), {
+    requestingUrl: 'https://a.example/'
+  });
+  policy.onRequest(known, 'notifications', (v) => answers.push(v), {
+    requestingUrl: 'https://b.example/'
+  });
   policy.denyAll();
   assert.deepEqual(answers, [false, false]);
 });
@@ -119,7 +139,10 @@ test('requests without a web address are denied', async () => {
 });
 
 test('permission descriptions are friendly', () => {
-  assert.equal(describePermission('media', { mediaTypes: ['audio', 'video'] }), 'use your camera and microphone');
+  assert.equal(
+    describePermission('media', { mediaTypes: ['audio', 'video'] }),
+    'use your camera and microphone'
+  );
   assert.equal(describePermission('media', { mediaTypes: ['audio'] }), 'use your microphone');
   assert.equal(describePermission('notifications'), 'send you notifications');
 });

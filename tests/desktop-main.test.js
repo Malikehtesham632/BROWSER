@@ -6,6 +6,9 @@ import Module, { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 
+process.env.SEARXNG_ENABLED = 'false';
+process.env.SEARXNG_INSTANCES = '';
+
 const require = createRequire(import.meta.url);
 const root = path.resolve(import.meta.dirname, '..');
 const userData = await fs.mkdtemp(path.join(os.tmpdir(), 'nova-main-'));

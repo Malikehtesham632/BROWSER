@@ -55,8 +55,14 @@ test('history is grouped by day', () => {
     { url: 'd', lastVisit: now - 30 * day }
   ];
   const groups = groupHistory(entries, now);
-  assert.deepEqual(groups.map((g) => g.label), ['Today', 'Yesterday', 'Last 7 days', 'Older']);
-  assert.deepEqual(groups.map((g) => g.items[0].url), ['a', 'b', 'c', 'd']);
+  assert.deepEqual(
+    groups.map((g) => g.label),
+    ['Today', 'Yesterday', 'Last 7 days', 'Older']
+  );
+  assert.deepEqual(
+    groups.map((g) => g.items[0].url),
+    ['a', 'b', 'c', 'd']
+  );
   assert.deepEqual(groupHistory([], now), []);
 });
 
@@ -92,10 +98,18 @@ test('time is shown in seconds', () => {
 
 test('new domains are only reported once', () => {
   const seen = new Set();
-  const first = newDomains([{ url: 'https://www.a.com/1' }, { url: 'https://b.com/' }, { url: 'bad' }], seen);
+  const first = newDomains(
+    [{ url: 'https://www.a.com/1' }, { url: 'https://b.com/' }, { url: 'bad' }],
+    seen
+  );
   assert.deepEqual(first, ['a.com', 'b.com']);
-  assert.deepEqual(newDomains([{ url: 'https://a.com/2' }, { url: 'https://c.com' }], seen), ['c.com']);
-  assert.equal(newDomains([{ url: 'https://d.com' }, { url: 'https://e.com' }], new Set(), 1).length, 1);
+  assert.deepEqual(newDomains([{ url: 'https://a.com/2' }, { url: 'https://c.com' }], seen), [
+    'c.com'
+  ]);
+  assert.equal(
+    newDomains([{ url: 'https://d.com' }, { url: 'https://e.com' }], new Set(), 1).length,
+    1
+  );
 });
 
 test('provider names are friendly', () => {
@@ -113,7 +127,8 @@ test('list selection wraps around', () => {
 });
 
 test('keyboard shortcuts match the ones people know from Firefox', () => {
-  const press = (key, mods = {}) => matchShortcut({ key, ctrl: false, shift: false, alt: false, ...mods });
+  const press = (key, mods = {}) =>
+    matchShortcut({ key, ctrl: false, shift: false, alt: false, ...mods });
   assert.equal(press('l', { ctrl: true }), 'focus-address');
   assert.equal(press('L', { ctrl: true }), 'focus-address');
   assert.equal(press('t', { ctrl: true }), 'new-tab');
@@ -141,7 +156,8 @@ test('keyboard shortcuts match the ones people know from Firefox', () => {
 });
 
 test('plain typing and unknown shortcuts are left alone', () => {
-  const press = (key, mods = {}) => matchShortcut({ key, ctrl: false, shift: false, alt: false, ...mods });
+  const press = (key, mods = {}) =>
+    matchShortcut({ key, ctrl: false, shift: false, alt: false, ...mods });
   assert.equal(press('a'), null);
   assert.equal(press('l'), null);
   assert.equal(press('Tab'), null);
@@ -158,5 +174,8 @@ test('keyboard events from the page and from the window give the same result', (
   assert.equal(matchShortcut(fromElectronInput({ key: 't', control: true })), 'new-tab');
   assert.equal(matchShortcut(fromElectronInput({ key: 't', meta: true })), 'new-tab');
   assert.equal(matchShortcut(fromKeyboardEvent({ key: 't', ctrlKey: true })), 'new-tab');
-  assert.equal(matchShortcut(fromKeyboardEvent({ key: 't', metaKey: true, shiftKey: true })), 'reopen-tab');
+  assert.equal(
+    matchShortcut(fromKeyboardEvent({ key: 't', metaKey: true, shiftKey: true })),
+    'reopen-tab'
+  );
 });

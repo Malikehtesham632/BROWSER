@@ -8,6 +8,7 @@ export function fuseResults(lists, { k = 60, weights = {}, limit = 20 } = {}) {
       const key = canonicalUrlKey(result.url);
       if (!key) return;
       const rank = result.rank ?? index + 1;
+      const resultEngines = [...(result.engines || []), ...(result.engine ? [result.engine] : [])];
       let e = merged.get(key);
       if (!e) {
         e = {
@@ -16,29 +17,14 @@ export function fuseResults(lists, { k = 60, weights = {}, limit = 20 } = {}) {
           snippet: result.snippet || '',
           source,
           sources: [],
+          engines: [],
           publishedAt: result.publishedAt ?? null,
           score: 0,
           ranks: {}
         };
         merged.set(key, e);
       }
-      const incomingEngines = Array.isArray(result.engines)
-        ? result.engines
-        : (typeof result.engine === 'string' && result.engine ? [result.engine] : []);
-      if (incomingEngines.length) {
-        e.engines ??= [];
-        for (const engine of incomingEngines) {
-          if (typeof engine === 'string' && engine.trim() && !e.engines.includes(engine.trim())) {
-            e.engines.push(engine.trim());
-          }
-        }
-        if (!e.engine && typeof result.engine === 'string' && result.engine.trim()) {
-          e.engine = result.engine.trim();
-        }
-        if (!e.engine && e.engines.length) e.engine = e.engines[0];
-      }
-      // Multiple SearXNG engines may return the same URL within one provider.
-      // Preserve that engine metadata even when rank/source is deduplicated.
+      for (const engine of resultEngines) if (!e.engines.includes(engine)) e.engines.push(engine);
       if (e.ranks[source] !== undefined) return;
       e.ranks[source] = rank;
       e.sources.push(source);
@@ -51,5 +37,9 @@ export function fuseResults(lists, { k = 60, weights = {}, limit = 20 } = {}) {
   return [...merged.values()]
     .sort((a, b) => b.score - a.score || b.sources.length - a.sources.length)
     .slice(0, limit)
-    .map((e) => ({ ...e, score: Math.round(e.score * 1e5) / 1e5 }));
+    .map(({ engines, ...e }) => ({
+      ...e,
+      ...(engines.length ? { engine: engines[0], engines } : {}),
+      score: Math.round(e.score * 1e5) / 1e5
+    }));
 }

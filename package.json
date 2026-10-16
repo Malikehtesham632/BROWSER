@@ -1,13 +1,13 @@
 {
   "name": "omni-engine",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "private": true,
   "description": "Nova Browser, powered by Omni search.",
   "author": "Nova Browser",
   "main": "desktop/main.cjs",
   "type": "module",
   "engines": {
-    "node": ">=18.17"
+    "node": ">=22"
   },
   "scripts": {
     "start": "node src/server.js",
@@ -31,7 +31,8 @@
     "query:stats": "node src/query-cli.js stats",
     "query:list": "node src/query-cli.js list",
     "query:batch": "node src/query-batch-cli.js",
-    "format": "npx prettier@3 --write \"src/**/*.js\" \"tests/**/*.js\""
+    "format": "npx prettier@3 --write \"src/**/*.js\" \"tests/**/*.js\" \"desktop/*.js\" \"desktop/*.cjs\"",
+    "format:check": "npx prettier@3 --check \"src/**/*.js\" \"tests/**/*.js\" \"desktop/*.js\" \"desktop/*.cjs\""
   },
   "devDependencies": {
     "electron": "^44.5.1",
@@ -82,5 +83,13 @@
       "menuCategory": "Nova Browser"
     },
     "publish": null
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Malikehtesham632/BROWSER.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Malikehtesham632/BROWSER/issues"
+  },
+  "homepage": "https://github.com/Malikehtesham632/BROWSER#readme"
 }
