@@ -50,8 +50,9 @@ export function buildProviders(config, fetchImpl, logger = console) {
   const enabled = config.searxngEnabled ?? instances.length > 0;
   if (enabled && instances.length) {
     const client = createSearxngProvider(instances, {
-      timeoutMs: config.providerTimeoutMs,
-      retries: config.searxngRetries ?? 1,
+      timeoutMs: config.searxngTimeoutMs ?? 1800,
+      maxTimeoutMs: config.searxngTimeoutMs ?? 1800,
+      retries: config.searxngRetries ?? 0,
       fetchImpl,
       logger
     });

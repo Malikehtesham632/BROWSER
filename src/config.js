@@ -119,6 +119,7 @@ export function loadConfig() {
     searxngRetries: num('SEARXNG_RETRIES', 0, 0, 3),
     // Public instances can be slower than a private provider; allow the
     // fallback enough time to return actual query results.
+    searxngTimeoutMs: num('SEARXNG_TIMEOUT_MS', 1800, 250, 10000),
     providerTimeoutMs: num('PROVIDER_TIMEOUT_MS', 10000, 1),
     scrapeTimeoutMs: num('SCRAPE_TIMEOUT_MS', 30000, 1),
     cacheTtlMs: num('CACHE_TTL_SECONDS', 900) * 1000,
