@@ -1,38 +1,75 @@
+import fs from 'node:fs';
 import path from 'node:path';
 
+// Public SearXNG instances are a no-key fallback. Override with
+// SEARXNG_INSTANCES in .env when a more controlled deployment is available.
+const STABLE_GEMINI_MODEL = 'gemini-3.5-flash';
+
+// These replace the previous instances that were returning 429/418 responses.
+// Public instances can still rate-limit automated API traffic, so keep this list
+// short and allow users to override it with SEARXNG_INSTANCES.
 const DEFAULT_SEARXNG_INSTANCES = [
   'https://searx.tiekoetter.com/',
   'https://search.sapti.me/',
   'https://searx.work/'
 ];
 
-const STABLE_GEMINI_MODEL = 'gemini-3.5-flash';
+export function loadEnvFile(file = path.resolve('.env')) {
+  try {
+    const text = fs.readFileSync(file, 'utf8');
+    for (const line of text.split(/\r?\n/)) {
+      const value = line.trim();
+      if (!value || value.startsWith('#')) continue;
+      const i = value.indexOf('=');
+      if (i < 1) continue;
+      const key = value.slice(0, i).trim();
+      const entry = value
+        .slice(i + 1)
+        .trim()
+        .replace(/^['"]|['"]$/g, '');
+      if (process.env[key] === undefined) process.env[key] = entry;
+    }
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+  }
+}
 
-function num(name, fallback, min = -Infinity, max = Infinity) {
-  const raw = process.env[name];
-  if (raw === undefined || raw === '') return fallback;
+const num = (key, fallback, min = 0, max = Number.MAX_SAFE_INTEGER) => {
+  const raw = process.env[key];
+  if (raw === undefined || raw.trim() === '') return fallback;
   const value = Number(raw);
-  if (!Number.isFinite(value)) throw new Error(`${name} must be a number`);
-  if (value < min || value > max) throw new Error(`${name} must be between ${min} and ${max}`);
-  return value;
-}
-
-function bool(name, fallback) {
-  const raw = process.env[name];
-  if (raw === undefined || raw === '') return fallback;
-  return ['1', 'true', 'yes', 'on'].includes(raw.toLowerCase());
-}
-
-function domains(raw, fallback = '') {
-  return (raw || fallback)
+  return Number.isFinite(value) && value >= min && value <= max ? value : fallback;
+};
+const bool = (key, fallback) => /^(1|true|yes)$/i.test(process.env[key] ?? String(fallback));
+const splitList = (text) =>
+  String(text)
     .split(',')
-    .map((value) => value.trim().toLowerCase())
+    .map((item) => item.trim().toLowerCase())
     .filter(Boolean);
-}
+
+const domains = (raw, fallback) => splitList(raw === undefined ? fallback : raw);
 
 function searxngInstances() {
   const raw = process.env.SEARXNG_INSTANCES;
-  const instances = raw === undefined ? DEFAULT_SEARXNG_INSTANCES : raw.split(',').map((s) => s.trim()).filter(Boolean);
+  let instances;
+  if (raw === undefined)
+    instances = process.env.SEARXNG_URL ? [process.env.SEARXNG_URL] : DEFAULT_SEARXNG_INSTANCES;
+  else if (!raw.trim()) instances = [];
+  else if (raw.trim().startsWith('[')) {
+    try {
+      instances = JSON.parse(raw);
+    } catch {
+      throw new Error('SEARXNG_INSTANCES must be a JSON array or comma-separated URLs');
+    }
+    if (!Array.isArray(instances))
+      throw new Error('SEARXNG_INSTANCES must be a JSON array or comma-separated URLs');
+  } else {
+    instances = raw
+      .split(/[,\r\n]+/)
+      .map((value) => value.trim().replace(/^['"]|['"]$/g, ''))
+      .filter(Boolean);
+  }
+
   const normalized = [];
   for (const value of instances) {
     if (typeof value !== 'string')
@@ -80,9 +117,8 @@ export function loadConfig() {
     searxngInstances: searxngInstancesList,
     searxngUrl: searxngInstancesList[0] || '',
     searxngRetries: num('SEARXNG_RETRIES', 0, 0, 3),
-    // SearXNG is a fallback layer. Keep its public-instance budget isolated
-    // from the slower timeout used by primary providers so it can never add
-    // several seconds to every search when public instances are unhealthy.
+    // Public instances can be slower than a private provider; allow the
+    // fallback enough time to return actual query results.
     searxngTimeoutMs: num('SEARXNG_TIMEOUT_MS', 1800, 250, 10000),
     providerTimeoutMs: num('PROVIDER_TIMEOUT_MS', 10000, 1),
     scrapeTimeoutMs: num('SCRAPE_TIMEOUT_MS', 30000, 1),
@@ -146,5 +182,3 @@ export function loadConfig() {
     }
   };
 }
-
-export { DEFAULT_SEARXNG_INSTANCES };
