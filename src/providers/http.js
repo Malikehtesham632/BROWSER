@@ -16,7 +16,6 @@ export async function fetchJson(
     retries = 1,
     maxTotalMs = null,
     fetchImpl = globalThis.fetch,
-    includeErrorBody = true,
     ...init
   } = {}
 ) {
@@ -39,8 +38,7 @@ export async function fetchJson(
             throw new ProviderError(`${provider} returned invalid JSON`, { provider });
           }
         }
-        const body = includeErrorBody ? (await res.text()).slice(0, 300) : '';
-        throw new ProviderError(`${provider} HTTP ${res.status}${body ? `: ${body}` : ''}`, {
+        throw new ProviderError(`${provider} HTTP ${res.status}`, {
           provider,
           status: res.status,
           retryable: res.status === 429 || res.status >= 500
