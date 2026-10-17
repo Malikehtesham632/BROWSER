@@ -127,10 +127,7 @@ export function createServer(engine, config, deps = {}) {
         if (!res.writableEnded) res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
       };
       try {
-        write('start', {
-          providers: engine.providerNames(),
-          indexDocuments: engine.indexStats()?.documents ?? engine.indexStats()?.count ?? 0
-        });
+        write('start',{providers:engine.providerNames(), indexDocuments: engine.indexStats()?.documents ?? engine.indexStats()?.count ?? 0});
         const out = await engine.search(q, {
           num,
           onProvider: ({ provider, results }) =>
