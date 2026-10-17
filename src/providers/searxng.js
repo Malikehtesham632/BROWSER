@@ -55,11 +55,20 @@ export async function searchSearxng(query, baseUrl, opts = {}) {
   return results;
 }
 
+function cooldownFor(error, cooldownMs) {
+  const status = Number(error?.status);
+  if ([403, 418, 429].includes(status)) return Math.max(cooldownMs * 4, 120000);
+  return cooldownMs;
+}
+
 export function createSearxngProvider(
   instances,
   {
-    timeoutMs = 4000,
-    retries = 1,
+    timeoutMs = 2500,
+    retries = 0,
+    cooldownMs = 60000,
+    maxInstancesPerRequest = Infinity,
+    maxTimeoutMs = 2500,
     fetchImpl = globalThis.fetch,
     logger = console,
     now = Date.now
@@ -68,6 +77,7 @@ export function createSearxngProvider(
   const urls = [...new Set((instances || []).map(normalizeInstance))];
   if (!urls.length) throw new Error('At least one SearXNG instance is required');
 
+  const requestTimeoutMs = Math.min(Math.max(1, timeoutMs), Math.max(1, maxTimeoutMs));
   const states = urls.map((url) => ({
     instance: url,
     healthy: null,
@@ -75,29 +85,54 @@ export function createSearxngProvider(
     failures: 0,
     lastSuccessAt: null,
     consecutiveFailures: 0,
-    lastError: null
+    lastError: null,
+    cooldownUntil: 0
   }));
   let cursor = 0;
 
+  function candidates() {
+    const available = states
+      .map((state, index) => ({ state, index }))
+      .filter(({ state }) => state.cooldownUntil <= now());
+    if (!available.length) return [];
+
+    // Prefer known-healthy instances, then unknown instances, and only then
+    // previously failed instances whose cooldown has expired.
+    available.sort((a, b) => {
+      const healthRank = (state) => (state.healthy === true ? 0 : state.healthy === null ? 1 : 2);
+      const healthDelta = healthRank(a.state) - healthRank(b.state);
+      if (healthDelta) return healthDelta;
+      const latencyA = a.state.latencyMs ?? Number.MAX_SAFE_INTEGER;
+      const latencyB = b.state.latencyMs ?? Number.MAX_SAFE_INTEGER;
+      return latencyA - latencyB;
+    });
+
+    const startIndex = available.findIndex(({ index }) => index === cursor);
+    if (startIndex > 0) return available.slice(startIndex).concat(available.slice(0, startIndex));
+    return available;
+  }
+
   async function run(query, { num = 10 } = {}) {
     let lastError;
-    const start = cursor;
-    cursor = (cursor + 1) % urls.length;
-    const deadline = now() + timeoutMs;
+    const deadline = now() + requestTimeoutMs;
+    const selected = candidates().slice(0, Math.max(1, maxInstancesPerRequest));
 
-    for (let offset = 0; offset < urls.length; offset++) {
-      const index = (start + offset) % urls.length;
+    if (!selected.length) {
+      throw new ProviderError('searxng all instances are cooling down', { provider: 'searxng' });
+    }
+
+    for (const { index, state } of selected) {
       const url = urls[index];
-      const state = states[index];
       const started = now();
       const remaining = deadline - now();
       if (remaining <= 0) break;
+      cursor = (index + 1) % urls.length;
 
       logger.info?.(`[searxng] request started instance=${new URL(url).host}`);
       try {
         const results = await searchSearxng(query, url, {
           num,
-          timeoutMs: Math.min(timeoutMs, remaining),
+          timeoutMs: Math.min(requestTimeoutMs, remaining),
           totalTimeoutMs: remaining,
           retries,
           fetchImpl
@@ -107,6 +142,7 @@ export function createSearxngProvider(
         state.lastSuccessAt = new Date(now()).toISOString();
         state.consecutiveFailures = 0;
         state.lastError = null;
+        state.cooldownUntil = 0;
         logger.info?.(
           `[searxng] request succeeded instance=${new URL(url).host} latencyMs=${state.latencyMs} results=${results.length}`
         );
@@ -117,6 +153,7 @@ export function createSearxngProvider(
         state.failures++;
         state.consecutiveFailures++;
         state.lastError = String(error?.message ?? error).slice(0, 200);
+        state.cooldownUntil = now() + cooldownFor(error, cooldownMs);
         lastError = error;
         logger.warn?.(
           `[searxng] request failed instance=${new URL(url).host} latencyMs=${state.latencyMs} error=${state.lastError}`
@@ -125,10 +162,10 @@ export function createSearxngProvider(
     }
 
     if (now() >= deadline)
-      throw new ProviderError(`searxng timed out after ${timeoutMs}ms`, { provider: 'searxng' });
+      throw new ProviderError(`searxng timed out after ${requestTimeoutMs}ms`, { provider: 'searxng' });
     throw (
       lastError ||
-      new ProviderError(`searxng timed out after ${timeoutMs}ms`, { provider: 'searxng' })
+      new ProviderError(`searxng timed out after ${requestTimeoutMs}ms`, { provider: 'searxng' })
     );
   }
 
