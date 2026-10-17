@@ -74,10 +74,10 @@ test('browser menu reserves only its measured height instead of a fixed oversize
   assert.doesNotMatch(css, /\.browser-chrome\.menu-open\s*\{\s*padding-bottom:\s*min\(640px/);
 });
 
-test('Electron browser denies dangerous permission requests by default', () => {
-  const main = read('desktop/main.cjs');
-  assert.match(main, /setPermissionRequestHandler/);
-  assert.match(main, /permission === 'fullscreen'/);
+test('Electron browser permission policy allows only explicitly silent-safe permissions', () => {
+  const policy = read('desktop/permissions.cjs');
+  assert.match(policy, /const SILENT_ALLOW = new Set\(\[\s*'fullscreen'/);
+  assert.match(policy, /if \(!PROMPTED\.has\(permission\)\) return callback\(false\)/);
 });
 
 test('Nova updater supports check, download and install lifecycle', () => {
