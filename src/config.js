@@ -5,10 +5,13 @@ import path from 'node:path';
 // SEARXNG_INSTANCES in .env when a more controlled deployment is available.
 const STABLE_GEMINI_MODEL = 'gemini-3.5-flash';
 
+// These replace the previous instances that were returning 429/418 responses.
+// Public instances can still rate-limit automated API traffic, so keep this list
+// short and allow users to override it with SEARXNG_INSTANCES.
 const DEFAULT_SEARXNG_INSTANCES = [
-  'https://searx.ononoki.org/',
-  'https://search.ctq.ro/',
-  'https://www.isci.si/'
+  'https://searx.tiekoetter.com/',
+  'https://search.sapti.me/',
+  'https://searx.work/'
 ];
 
 export function loadEnvFile(file = path.resolve('.env')) {
@@ -113,7 +116,7 @@ export function loadConfig() {
     searxngEnabled: bool('SEARXNG_ENABLED', searxngInstancesList.length > 0),
     searxngInstances: searxngInstancesList,
     searxngUrl: searxngInstancesList[0] || '',
-    searxngRetries: num('SEARXNG_RETRIES', 1, 0, 3),
+    searxngRetries: num('SEARXNG_RETRIES', 0, 0, 3),
     // Public instances can be slower than a private provider; allow the
     // fallback enough time to return actual query results.
     providerTimeoutMs: num('PROVIDER_TIMEOUT_MS', 10000, 1),
